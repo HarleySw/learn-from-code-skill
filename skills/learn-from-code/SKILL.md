@@ -1,6 +1,10 @@
 ---
 name: learn-from-code
 description: Use when the user asks to explain recent code changes, review a git diff or commit for learning, understand architectural decisions, avoid comprehension debt, or practice hands-on coding via TODO(human) exercises.
+license: MIT
+metadata:
+  author: HarleySw
+  version: "1.4.0"
 ---
 
 # Learn From Code

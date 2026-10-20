@@ -42,6 +42,12 @@ Install globally for all supported agents (Claude Code, Cursor, Antigravity, Gem
 npx skills add -g HarleySw/learn-from-code-skill
 ```
 
+Update to the latest version:
+
+```bash
+npx skills update
+```
+
 ## Usage
 
 Once installed, your AI coding agent will automatically activate `learn-from-code` when you ask to review changes or practice hands-on coding. You can also invoke it explicitly:
