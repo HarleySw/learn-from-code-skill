@@ -40,13 +40,18 @@ Build codebase mental models and debugging intuition from code changes by limiti
    - Put all explanations of non-obvious variables, magic numbers, array/regex indices, bitmasks, or boundary conditions directly into short inline comments inside the code snippet in the user's language.
    - Whenever a code line contains a long string interpolation, complex regex, or multi-part expression, the inline comment right above that line **must include a concrete evaluated example string/value** so the reader grasps the result in 1 second without mentally parsing the expression.
    - Never repeat prose summaries of variables above the code.
-4. **Working Memory Cap (Max 3 Function Names in Flow):**
+4. **Bridge Domain Model & Program Model (Real-World Triggers, Business Rules & Domain Risks):**
+   - Code mechanics (`Program Model`) are only half of comprehension; always anchor them to the project's real-world workflow and business invariants (`Domain / Situation Model`):
+     - **In Section 2 (Real-World User / Business Triggers):** Never list functions as dry data processors. Start each step with the **real-world user action or business event** that triggers that function and the user goal it serves (e.g., when a user updates settings or adds a new item mid-day after completing morning actions, triggering a schedule recalculation that must preserve completed records).
+     - **In Section 3 (Business Rules & Divergent Domain Policies):** In the opening transition of each Step, state the **Business Rule / Domain Invariant** being enforced. When two modules in the same commit handle the same domain entity differently (e.g., one module deduplicates items by name while another keeps every item per parent container), explicitly explain the **business reason** behind that difference.
+     - **In Section 4 (Domain Invariant Risks):** When describing a bug or unverified assumption, never stop at the technical symptom (e.g., "the second entry is skipped in the Map"); state the **concrete real-world business/user impact** if that invariant fails.
+5. **Working Memory Cap (Max 3 Function Names in Flow):**
    - In the execution flow section, summarize the pipeline in **3–4 plain-language action steps** naming **at most 2–3 main functions**. Do not dump 6–8 internal helper names or low-level spec operators at once.
-5. **Noise-Free `Before -> After` / `Input -> Output` Data Examples:**
+6. **Noise-Free `Before -> After` / `Input -> Output` Data Examples:**
    - Replace irrelevant boilerplate, unchanged fields, or verbose parameters with `...` so the reader spots the exact transformation in 3 seconds.
-6. **Chronological Story Pipeline (`Step 1 -> Step 2 -> Step 3`):**
+7. **Chronological Story Pipeline (`Step 1 -> Step 2 -> Step 3`):**
    - Order the steps chronologically along the actual data or execution flow (`Step 1 -> Step 2 -> Step 3`) and title each step with the practical technical question that step resolves.
-7. **Link Once Per Section:**
+8. **Link Once Per Section:**
    - Link a file or symbol only on its **first appearance** in a section. Do not spam clickable links on every line.
 
 ## 5-Section Output Contract (Mode A Recipe)
@@ -66,21 +71,21 @@ Explain the causal chain at the **Macro / System behavior level** (leaving Micro
   - **Core approach:** Summarize how the chosen design `[P]` solves that challenge (`[Solution D]`).
   - **Concrete example (`Input -> Output`):** A 2–4 line noise-free snippet illustrating what enters and exits the module.
 
-### 2. Main Execution Flow (3–4 steps)
-- A numbered list of 3–4 plain-language steps tracing how data moves from the caller to the core change, naming **at most 2–3 primary functions** (or, for declarative code like SQL, Schema, Config, and CSS/UI without a sequential call stack, **3–4 Data Transformation Phases or Constraint Layers** such as *Step 1: Data sources & JOINs -> Step 2: Filtering & grouping -> Step 3: Output projections*).
+### 2. Main Execution Flow (3–4 steps anchored to Real-World User / Business Triggers)
+- A numbered list of 3–4 plain-language steps where each step opens with the **real-world user action or business scenario** that triggers it, tracing how data moves to the core change and naming **at most 2–3 primary functions** (or, for declarative code like SQL, Schema, Config, and CSS/UI without a sequential call stack, **3–4 Data Transformation Phases or Constraint Layers**).
 
 ### 3. Core Code Steps (1 to 3 steps, scaled to diff complexity — Micro / Code Level)
 For each step (`#### Step 1: [Practical technical question?]`, plus `Step 2` / `Step 3` only when distinct engineering decisions exist):
-- **1 plain-language transition sentence** connecting this step to the previous one.
+- **1–2 plain-language transition sentences** connecting this step to the previous one, stating the **Business Rule / Domain Invariant** this step protects (and, if another module in the commit treats the same entity differently, why the business domain requires that difference).
 - **Short code snippet (8–18 lines):** Put all explanations of non-obvious variables, magic numbers, array/regex indices, bitmasks, or boundary conditions directly in inline comments (in the user's language) above/beside the code lines. For long string interpolations, regexes, or complex expressions, include a **concrete evaluated example** inside the comment (e.g., `// Match full key (e.g. k === "OrderA_1_Morning_0730")`).
 - **Focused explanation below the code (2 items only, localized to the user's language):**
   - **Contrastive Why (Why not naive `[Q]` / what breaks if omitted):** At most 2 concise sentences explaining why the simpler/naive approach `[Q]` (or omitting this step) fails and what concrete bug occurs in practice.
   - **Visual Dry-Run:** 2–3 sub-bullets using arrows (`->`) and short, memorable sample values tracing how the input evaluates across the variables and branches to the final result.
 
 ### 4. Verification & Hidden Risks
-- **`⚠️ Defect Alert` *(Only if a bug/flaw exists in the diff)*:** If the code introduces a logic bug, `race condition`, memory/resource leak, or security flaw, highlight it right here at the top of Section 4 (pinpointing the exact line from Section 3, failure scenario with `->` steps, and fix)—and do not repeat it in the bullets below.
+- **`⚠️ Defect Alert` *(Only if a bug/flaw exists in the diff)*:** If the code introduces a logic bug, `race condition`, memory/resource leak, or security flaw, highlight it right here at the top of Section 4 (pinpointing the exact line from Section 3, failure scenario with `->` steps, real-world domain impact, and fix)—and do not repeat it in the bullets below.
 - **Verified:** 1 bullet on what is proven to work + a 1-line **Quick verification** (exact `breakpoint` line, test command, or visual check).
-- **Assumptions & Risks:** 1–2 bullets on remaining unverified `edge cases` or library upgrade risks.
+- **Assumptions & Risks:** 1–2 bullets on remaining unverified `edge cases` or domain invariant risks, explicitly stating both the **technical trigger** and the **real-world business/user consequence** if violated.
 
 ### 5. Debugging Check (1–2 short questions)
 - Ask **1–2 single-focus debugging or boundary questions** (answerable in 2–3 sentences).
@@ -106,6 +111,7 @@ For each step (`#### Step 1: [Practical technical question?]`, plus `Step 2` / `
 
 ## Red Flags — STOP and Fix Before Sending
 
+- **Missing Domain Model context:** Writing dry data-processing steps in Section 2 without real-world user/business triggers, omitting the business reason when two modules handle the same entity differently in Section 3, or stating purely technical symptoms in Section 4 without their real-world user/business impact.
 - **Premature complexity at the top of Section 1:** Putting a `⚠️ Defect Alert` before Section 3, or printing a `Change Map` for a single-purpose commit where client/server/test files all solve the same problem.
 - **Wall-of-prose Dry-Run or 3rd `If omitted` bullet in Section 3:** Writing a dense paragraph for the dry-run instead of 2–3 arrow (`->`) bullets with short, memorable sample names, or keeping a separate `If omitted` bullet that repeats the `Contrastive Why`.
 - **Missing concrete example in complex code comments:** Leaving a long string interpolation or regex in Section 3 without an evaluated example string in its inline comment.
