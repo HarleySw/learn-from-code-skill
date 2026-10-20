@@ -4,7 +4,7 @@ description: Use when the user asks to explain recent code changes, review a git
 license: MIT
 metadata:
   author: HarleySw
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # Learn From Code
@@ -88,14 +88,14 @@ For each step (`#### Step 1: [Practical technical question?]`, plus `Step 2` / `
 
 ### 4. Verification & Hidden Risks
 - **`⚠️ Defect Alert` *(Only if a bug/flaw exists in the diff or its unseen callers)*:** Before writing Section 4, quickly check immediate callers and downstream consumers **outside the `git diff`** to see if changing an ID format, return type, or state breaks any unmodified file. If the diff or an unseen caller contains a logic bug, `race condition`, leak, or contract break, highlight it right here at the top of Section 4 (pinpointing the exact line, failure scenario with `->` steps, real-world domain impact, and fix)—and do not repeat it in the bullets below.
-- **Verified:** 1 bullet on what is proven to work + a 1-line **Quick verification** (exact `breakpoint` line, test command, or visual check).
-- **Assumptions & Risks:** 1–2 bullets on remaining unverified `edge cases`, unseen caller assumptions, or domain invariant risks, explicitly stating both the **technical trigger** and the **real-world business/user consequence** if violated.
+- **Verified:** 1 bullet on what is proven to work + a 1-line **Quick verification** specifying an exact `breakpoint` (`file:line`) accompanied by the concrete **State Invariant / expression** to inspect to verify state is not infected/corrupted (e.g., `breakpoint at file.ts:131: verify Object.keys(doses) all carry ${prescriptionId}_ prefix`), plus any relevant test command or visual check.
+- **Assumptions & Risks:** 1–2 bullets on remaining unverified `edge cases`, unseen caller assumptions, or domain invariant risks, explicitly stating both the **technical trigger** and the **real-world business/user consequence** if violated. If twin logic, shared key formats, or producer-consumer contracts span multiple files (*Delocalized Plan / Co-Change Coupling*, e.g., Client API vs. Server Service), explicitly mandate the cross-file sync rule: *"If modifying logic [X] in [File A] later, [File B] must be updated synchronously to prevent state drift."*
 
 ### 5. Debugging Check (1–2 short questions)
 - Ask **1–2 single-focus debugging or boundary questions** (answerable in 2–3 sentences).
 - **Only ask about code shown in Section 3:** Every question must target a specific condition or line visible in the Section 3 snippets (never ask about unseen helper functions or omitted lines) and quote that condition inline so the user never has to scroll up or open another file.
 - **Wait for the user's reply** before giving the answers.
-- *(Optional)* Add a 5-bullet repo gotcha note **only** if omitting it would cause a bug next month and it is not already recorded in project memory; ask before writing to repo files.
+- *(Optional)* Add a 5-bullet repo gotcha note **only** if omitting it would cause a bug next month (especially cross-file synchronization rules: *"If modifying logic [X] in file [A] later, you must synchronously update file [B] to prevent state divergence"*) and it is not already recorded in project memory; ask before writing to repo files.
 
 ## Edge Case & Multi-Turn Rules
 
@@ -118,7 +118,7 @@ For each step (`#### Step 1: [Practical technical question?]`, plus `Step 2` / `
 
 ## Red Flags — STOP and Fix Before Sending
 
-- **Missing Domain Model context or Unseen-Caller check:** Writing dry data-processing steps in Section 2 without real-world user/business triggers, omitting the business reason when two modules handle the same entity differently in Section 3, failing to check immediate callers/consumers outside the `git diff` for contract breaks, or stating purely technical symptoms in Section 4 without their real-world user/business impact.
+- **Missing Domain Model context, Unseen-Caller check, Co-Change Coupling, or Breakpoint State Invariant:** Writing dry data-processing steps in Section 2 without real-world user/business triggers, omitting the business reason when two modules handle the same entity differently in Section 3, failing to check immediate callers/consumers outside the `git diff` for contract breaks, omitting the cross-file co-change rule (*"If modifying [X] in [File A], synchronously update [File B]"*) when logic is mirrored/split across files, suggesting a bare `breakpoint` line without the exact state invariant/expression to inspect, or stating purely technical symptoms in Section 4 without their real-world user/business impact.
 - **Premature complexity at the top of Section 1:** Putting a `⚠️ Defect Alert` before Section 3, or printing a `Change Map` for a single-purpose commit where client/server/test files all solve the same problem.
 - **Wall-of-prose Dry-Run or 3rd `If omitted` bullet in Section 3:** Writing a dense paragraph for the dry-run instead of 2–3 arrow (`->`) bullets with short, memorable sample names (or `t1 -> t2 -> t3` for async/concurrency), or keeping a separate `If omitted` bullet that repeats the `Contrastive Why`.
 - **Missing concrete example in complex code comments:** Leaving a long string interpolation or regex in Section 3 without an evaluated example string in its inline comment.

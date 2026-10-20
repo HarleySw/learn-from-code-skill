@@ -1,7 +1,7 @@
 # learn-from-code
 
 [![skills.sh](https://skills.sh/b/HarleySw/learn-from-code-skill)](https://skills.sh/HarleySw/learn-from-code-skill)
-[![Version](https://img.shields.io/badge/version-1.5.0-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
+[![Version](https://img.shields.io/badge/version-1.6.0-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Agent Skills](https://img.shields.io/badge/standard-agentskills.io-purple.svg)](https://agentskills.io/)
 
@@ -38,6 +38,8 @@ Passive explanations fail software teams:
 * **Causal Domino Chain (`A -> B -> C`):** Explains *why* naive alternatives fail (`[Trigger A] -> [Intermediate state B] -> [Concrete failure C]`), not just what line changed.
 * **Interleaved Timelines for Async/Concurrency:** Renders async lifecycles, abort controllers, locks, and race conditions as chronologically interleaved timelines (`t1 -> t2 -> t3`).
 * **Unseen Caller / Consumer Audit:** Scans immediate callers and data consumers **outside the `git diff`** to ensure changed ID formats, return types, or enum states don't break unmodified files.
+* **Delocalized Co-Change Warnings:** Explicitly calls out split or mirrored logic across files (client vs. server, producer vs. consumer) with clear synchronization rules to prevent state drift.
+* **State Invariant Breakpoints:** Pairs suggested breakpoint lines with the exact runtime state invariant expression to inspect, isolating defects before state infection spreads.
 * **Working Memory Cap:** Execution flows are summarized in 3–4 plain-language steps naming **at most 2–3 primary functions**.
 * **Automatic Localization:** Automatically responds in your conversation language (English, Vietnamese, Japanese, etc.) with natural senior-developer register (preserving universal terms like `race condition`, `deadlock`, `in-place`, `fallback`, `breakpoint`).
 
@@ -104,8 +106,8 @@ Every Mode A explanation follows a standardized, predictable recipe:
 1. **Big Picture (Problem & Core Idea):** Symptom, everyday root-cause analogy, fix summary, and a noise-free 2–4 line `Before -> After` snippet.
 2. **Main Execution Flow:** 3–4 steps opening with the real-world user/business trigger, naming at most 2–3 primary functions.
 3. **Core Code Steps (`Step 1 -> Step 2 -> Step 3`):** Up to 3 chronological steps with inline code annotations, a 2-sentence *Contrastive Why* (why naive approach fails), and a *Visual Dry-Run* (`input -> output` or `t1 -> t2 -> t3` timeline).
-4. **Verification & Hidden Risks:** High-priority `⚠️ Defect Alert` (if bugs/unseen caller breakages exist), followed by verified facts with quick verification commands, and unverified domain risks.
-5. **Debugging Check:** 1–2 single-focus boundary questions targeting the shown snippets to test mental retention, pausing for your response.
+4. **Verification & Hidden Risks:** High-priority `⚠️ Defect Alert` (if bugs/unseen caller breakages exist), followed by verified facts with a `breakpoint` (`file:line` + exact **state invariant** to inspect), unverified domain risks, and cross-file **co-change coupling** rules.
+5. **Debugging Check:** 1–2 single-focus boundary questions targeting the shown snippets to test mental retention (plus an optional 5-bullet repo gotcha note for cross-file coupling), pausing for your response.
 
 ---
 
@@ -130,7 +132,7 @@ Every Mode A explanation follows a standardized, predictable recipe:
 learn-from-code-skill/
 ├── skills/
 │   └── learn-from-code/
-│       └── SKILL.md       # Core specification & prompt contract (v1.5.0)
+│       └── SKILL.md       # Core specification & prompt contract (v1.6.0)
 ├── LICENSE                # MIT License
 └── README.md              # Documentation & quickstart guide
 ```
