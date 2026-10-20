@@ -2,3 +2,12 @@
 Thumbs.db
 node_modules/
 *.log
+
+# Locally installed agent skills
+.agents/
+.claude/
+agent/
+skills-lock.json
+skills/*
+!skills/learn-from-code
+
