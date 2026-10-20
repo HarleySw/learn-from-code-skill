@@ -4,7 +4,7 @@ description: Use when the user asks to explain recent code changes, review a git
 license: MIT
 metadata:
   author: HarleySw
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 # Learn From Code
@@ -14,7 +14,7 @@ Build codebase mental models and debugging intuition from code changes by limiti
 ## Operating Modes
 
 - **Mode A — Post-Implementation Review (Default):** Explain a completed `git diff`, commit, or existing module using the 5-Section Output Contract below, then pause for active retrieval.
-- **Mode B — In-Task Active Learning (`TODO(human)`):** Survey existing patterns, generate surrounding boilerplate, and leave 5–15 lines at the key decision point marked `TODO(human)` with context, contract, and tradeoffs. Wait for the user to implement it before reviewing.
+- **Mode B — In-Task Active Learning (`TODO(human)`):** Survey existing patterns, generate surrounding boilerplate, and leave 5–15 lines at the key decision point marked `TODO(human)`. Output a 4-bullet handoff block (**Business Context** — the domain rule at stake, **Location** — exact file & line of `TODO(human)`, **Contract** — inputs and expected return/side effects, and **Edge Cases to Weigh** — 1–2 boundary conditions to handle) and pause for the user to implement it; once written, review their code in 3–5 concise sentences.
 
 ## Language & Developer Register Rules
 
@@ -37,9 +37,9 @@ Build codebase mental models and debugging intuition from code changes by limiti
 2. **No Wall-of-Prose — Contrastive Why + Visual Arrow (`->`) Dry-Run:**
    - Below each code snippet in Section 3, keep **only 2 items** (never add a separate 3rd `If omitted` bullet that repeats the failure):
      1. **Contrastive Why (Why not the naive approach / what breaks without it):** At most 2 concise sentences explaining why the simpler/naive approach `[Q]` (or omitting this check) fails (`[State A] -> [Intermediate state B] -> [Failure C]`) and why `[P]` prevents it.
-     2. **Visual Dry-Run:** Format strictly as **2–3 sub-bullets using arrows (`->`)** with short, memorable sample values (never write a dense 100-word prose paragraph or use cryptic test IDs). Example shape:
-        - Case 1 (`input = "Order_A"`, `id = "1"`) -> builds `scopedId = "Order_A_1"` -> Kept.
-        - Case 2 (`input = "Order_B"`, `id = "1"`) -> builds `scopedId = "Order_B_1"` (distinct from `"Order_A_1"`) -> Both kept!
+     2. **Visual Dry-Run:** Format strictly as **2–3 sub-bullets using arrows (`->`)** with short, memorable sample values (never write a dense 100-word prose paragraph or use cryptic test IDs):
+        - *Standard synchronous logic:* Trace 1–2 concrete inputs (`Case 1: input = "Order_A", id = "1" -> builds scopedId = "Order_A_1" -> Kept`).
+        - *Async, concurrency, lock, or lifecycle cleanup logic (`async/await`, `race condition`, `useEffect` cleanup, `AbortController`, debounce):* Format as an **Interleaved Timeline (`t1 -> t2 -> t3`)** showing overlapping events (e.g., `t1: Request A starts -> t2: User switches tab, cleanup sets cancelled = true -> t3: Stale Request A resolves, hits cancelled guard, and exits without overwriting state`).
 3. **Concrete Evaluated Examples Inside Inline Code Comments:**
    - Put all explanations of non-obvious variables, magic numbers, array/regex indices, bitmasks, or boundary conditions directly into short inline comments inside the code snippet in the user's language.
    - Whenever a code line contains a long string interpolation, complex regex, or multi-part expression, the inline comment right above that line **must include a concrete evaluated example string/value** so the reader grasps the result in 1 second without mentally parsing the expression.
@@ -48,7 +48,7 @@ Build codebase mental models and debugging intuition from code changes by limiti
    - Code mechanics (`Program Model`) are only half of comprehension; always anchor them to the project's real-world workflow and business invariants (`Domain / Situation Model`):
      - **In Section 2 (Real-World User / Business Triggers):** Never list functions as dry data processors. Start each step with the **real-world user action or business event** that triggers that function and the user goal it serves (e.g., when a user updates settings or adds a new item mid-day after completing morning actions, triggering a schedule recalculation that must preserve completed records).
      - **In Section 3 (Business Rules & Divergent Domain Policies):** In the opening transition of each Step, state the **Business Rule / Domain Invariant** being enforced. When two modules in the same commit handle the same domain entity differently (e.g., one module deduplicates items by name while another keeps every item per parent container), explicitly explain the **business reason** behind that difference.
-     - **In Section 4 (Domain Invariant Risks):** When describing a bug or unverified assumption, never stop at the technical symptom (e.g., "the second entry is skipped in the Map"); state the **concrete real-world business/user impact** if that invariant fails.
+     - **In Section 4 (Domain Invariant Risks & Unseen Callers):** When describing a bug or unverified assumption, never stop at the technical symptom (e.g., "the second entry is skipped in the Map"); state the **concrete real-world business/user impact** if that invariant fails.
 5. **Working Memory Cap (Max 3 Function Names in Flow):**
    - In the execution flow section, summarize the pipeline in **3–4 plain-language action steps** naming **at most 2–3 main functions**. Do not dump 6–8 internal helper names or low-level spec operators at once.
 6. **Noise-Free `Before -> After` / `Input -> Output` Data Examples:**
@@ -84,12 +84,12 @@ For each step (`#### Step 1: [Practical technical question?]`, plus `Step 2` / `
 - **Short code snippet (8–18 lines):** Put all explanations of non-obvious variables, magic numbers, array/regex indices, bitmasks, or boundary conditions directly in inline comments (in the user's language) above/beside the code lines. For long string interpolations, regexes, or complex expressions, include a **concrete evaluated example** inside the comment (e.g., `// Match full key (e.g. k === "OrderA_1_Morning_0730")`).
 - **Focused explanation below the code (2 items only, localized to the user's language):**
   - **Contrastive Why (Why not naive `[Q]` / what breaks if omitted):** At most 2 concise sentences explaining why the simpler/naive approach `[Q]` (or omitting this step) fails and what concrete bug occurs in practice.
-  - **Visual Dry-Run:** 2–3 sub-bullets using arrows (`->`) and short, memorable sample values tracing how the input evaluates across the variables and branches to the final result.
+  - **Visual Dry-Run:** 2–3 sub-bullets using arrows (`->`) and short, memorable sample values tracing how the input evaluates across the variables and branches to the final result (or an **Interleaved Timeline `t1 -> t2 -> t3`** for async/concurrency/cleanup code).
 
 ### 4. Verification & Hidden Risks
-- **`⚠️ Defect Alert` *(Only if a bug/flaw exists in the diff)*:** If the code introduces a logic bug, `race condition`, memory/resource leak, or security flaw, highlight it right here at the top of Section 4 (pinpointing the exact line from Section 3, failure scenario with `->` steps, real-world domain impact, and fix)—and do not repeat it in the bullets below.
+- **`⚠️ Defect Alert` *(Only if a bug/flaw exists in the diff or its unseen callers)*:** Before writing Section 4, quickly check immediate callers and downstream consumers **outside the `git diff`** to see if changing an ID format, return type, or state breaks any unmodified file. If the diff or an unseen caller contains a logic bug, `race condition`, leak, or contract break, highlight it right here at the top of Section 4 (pinpointing the exact line, failure scenario with `->` steps, real-world domain impact, and fix)—and do not repeat it in the bullets below.
 - **Verified:** 1 bullet on what is proven to work + a 1-line **Quick verification** (exact `breakpoint` line, test command, or visual check).
-- **Assumptions & Risks:** 1–2 bullets on remaining unverified `edge cases` or domain invariant risks, explicitly stating both the **technical trigger** and the **real-world business/user consequence** if violated.
+- **Assumptions & Risks:** 1–2 bullets on remaining unverified `edge cases`, unseen caller assumptions, or domain invariant risks, explicitly stating both the **technical trigger** and the **real-world business/user consequence** if violated.
 
 ### 5. Debugging Check (1–2 short questions)
 - Ask **1–2 single-focus debugging or boundary questions** (answerable in 2–3 sentences).
@@ -99,15 +99,18 @@ For each step (`#### Step 1: [Practical technical question?]`, plus `Step 2` / `
 
 ## Edge Case & Multi-Turn Rules
 
-1. **Untangle Multi-Concern Commits (Only When Truly Tangled):**
+1. **Smart Target Resolution (When No Commit or File Is Specified):**
+   - If the user invokes the skill without specifying a commit or file: (a) check uncommitted changes (`git diff` and `git diff --staged`) first; (b) if the working tree is clean, inspect `HEAD`; (c) if `HEAD` only touches docs, tooling/skill configs, formatting, or demo scripts, scan `git log` to select the **most recent core application/domain code commit** and add a 1-line note at the top identifying the chosen commit.
+2. **Untangle Multi-Concern Commits (Only When Truly Tangled):**
    - Only output a brief **Change Map** at the top of Section 1 when a commit bundles **multiple unrelated features or concerns**. Never print a `Change Map` when client, server, and test files all implement a single cohesive fix or feature.
    - When a commit is genuinely tangled, deep-dive into **only the single most critical Core Logic slice** (200–400 LOC budget) across Sections 1–5, and ask at the end whether the user wants to move to the next slice in the following turn.
-2. **Auto Scale-Down (Trivial / Single-Decision Diffs):**
-   - If a diff contains only 1 meaningful engineering decision (e.g., tightening a guard clause, adding a config flag, fixing an off-by-one boundary), write **only `Step 1`** in Section 3 and keep the explanation tight and focused on that single decision.
-   - Never fabricate `Step 2` or `Step 3` from obvious boilerplate just to fill the template.
-3. **Defect Alert in Section 4 (Anti-Post-Hoc Rationalization):**
-   - Audit the diff for correctness before explaining. Never rationalize broken code as clever design—after walking through the code in Section 3, flag any real logic bug, `race condition`, leak, or vulnerability with **`⚠️ Defect Alert`** at the top of Section 4.
-4. **Turn-2 Reply Protocol (Formative Feedback on Section 5):**
+3. **Auto Scale-Down (Trivial / Single-Decision Diffs):**
+   - If a diff contains only 1 meaningful engineering decision (e.g., tightening a guard clause, adding a config flag, fixing an off-by-one boundary), write **only `Step 1`** in Section 3 and keep the explanation tight and focused on that single decision. Never fabricate `Step 2` or `Step 3` from obvious boilerplate.
+4. **Deletion-Heavy / Simplification Commits (*Chesterton's Fence*):**
+   - When a commit primarily deletes legacy code, removes a `fallback` branch, or simplifies a module, quote the key removed block (or a compact `Before -> After` pair) in Section 3 and explain: (a) what original `edge case` or business rule the removed code protected, (b) what new mechanism replaces it so deletion is safe, and (c) whether existing persisted user data (`localStorage` / database) could fail once that branch is gone.
+5. **Defect & Unseen-Caller Audit in Section 4 (Anti-Post-Hoc Rationalization):**
+   - Audit both the diff and its immediate callers/consumers outside the diff before explaining. Never rationalize broken code as clever design—after walking through Section 3, flag any real logic bug, `race condition`, leak, or broken downstream caller with **`⚠️ Defect Alert`** at the top of Section 4.
+6. **Turn-2 Reply Protocol (Formative Feedback on Section 5):**
    - When the user replies to Section 5 questions, respond in **at most 3–5 short sentences**:
      1. Confirm what the user reasoned correctly.
      2. If there is a misconception or missed boundary condition, point directly to the quoted line or condition from Section 3 to correct it concisely.
@@ -115,9 +118,9 @@ For each step (`#### Step 1: [Practical technical question?]`, plus `Step 2` / `
 
 ## Red Flags — STOP and Fix Before Sending
 
-- **Missing Domain Model context:** Writing dry data-processing steps in Section 2 without real-world user/business triggers, omitting the business reason when two modules handle the same entity differently in Section 3, or stating purely technical symptoms in Section 4 without their real-world user/business impact.
+- **Missing Domain Model context or Unseen-Caller check:** Writing dry data-processing steps in Section 2 without real-world user/business triggers, omitting the business reason when two modules handle the same entity differently in Section 3, failing to check immediate callers/consumers outside the `git diff` for contract breaks, or stating purely technical symptoms in Section 4 without their real-world user/business impact.
 - **Premature complexity at the top of Section 1:** Putting a `⚠️ Defect Alert` before Section 3, or printing a `Change Map` for a single-purpose commit where client/server/test files all solve the same problem.
-- **Wall-of-prose Dry-Run or 3rd `If omitted` bullet in Section 3:** Writing a dense paragraph for the dry-run instead of 2–3 arrow (`->`) bullets with short, memorable sample names, or keeping a separate `If omitted` bullet that repeats the `Contrastive Why`.
+- **Wall-of-prose Dry-Run or 3rd `If omitted` bullet in Section 3:** Writing a dense paragraph for the dry-run instead of 2–3 arrow (`->`) bullets with short, memorable sample names (or `t1 -> t2 -> t3` for async/concurrency), or keeping a separate `If omitted` bullet that repeats the `Contrastive Why`.
 - **Missing concrete example in complex code comments:** Leaving a long string interpolation or regex in Section 3 without an evaluated example string in its inline comment.
 - **Telegraphic compression / skipped causal links:** Jumping directly from cause `[A]` to solution `[D]` without spelling out intermediate state `[B]` and concrete failure `[C]`.
 - Any dual-language header or bullet label in the format `<Local Label> (<English Label>):`.
