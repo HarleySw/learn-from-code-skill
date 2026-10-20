@@ -4,7 +4,7 @@ description: Use when the user asks to explain recent code changes, review a git
 license: MIT
 metadata:
   author: HarleySw
-  version: "1.8.0"
+  version: "1.9.0"
 ---
 
 # Learn From Code
@@ -30,17 +30,18 @@ Build codebase mental models and debugging intuition from code changes by limiti
      - ❌ *Bad (Abstract / Zombie Nouns):* `"The implementation of prefixing performs the isolation of identifiers to prevent the occurrence of data collision."`
      - ✅ *Good (Actor + Action Verb):* `"Prefixing pres.id gives each prescription a unique key so prescription B never overwrites prescription A."`
    - **One Word, One Meaning (Zero Synonym Rotation):** Once you name a domain entity or technical concept in the first sentence, use that exact term throughout the entire response—never rotate synonyms for stylistic variety.
-   - **One Idea Per Sentence (Max 25 Words) & `Old-Before-New` Chaining:** Limit each prose sentence to 1 main action (20–25 words max); use arrows (`->`) or split into two short sentences instead of nesting 3–4 clauses. When chaining two sentences, open sentence 2 with the variable or result produced at the end of sentence 1 (`[Function A builds string X]. [Using string X, Function B checks...]`).
+   - **One Idea Per Sentence (Max 25 Words) & `Old-Before-New` Chaining:** Limit each prose sentence to 1 main action (20–25 words max); use arrows (`->`) without literal `[...]` brackets or split into two short sentences instead of nesting 3–4 clauses. When chaining two sentences, open sentence 2 with the variable or result produced at the end of sentence 1 (*"Function A builds string X. Using string X, Function B checks..."*).
 
 ## Core Readability & Cognitive Load Rules
 
-1. **No Premature Complexity (Start Directly With the Problem):**
-   - Section 1 (`Big Picture`) must **always** open directly with `Symptom -> Root cause -> Fix -> Concrete example` (or `Goal -> Key design challenge -> Core approach -> Concrete example`).
+1. **No Premature Complexity or Code-Symbol Soup in Section 1 (Start With 100% Plain-Language Concepts):**
+   - Section 1 (`Big Picture`) must **always** open directly with `Symptom -> Root cause -> Fix -> Concrete example` (or `Goal -> Key design challenge -> Core approach -> Concrete example`) so the reader grasps the problem and core idea in 10 seconds.
+   - **Zero File, Function, or Variable Names in Section 1 Prose:** Never mention file paths, function names, or local variable/property identifiers (e.g., `p.id`, `pres.id`, `m.id`, `scopedId`, `legacyKey`, `mergePrescriptionsForContext`) in the 3 prose bullets (`Symptom`, `Root cause`, `Fix`). Explain them entirely in plain domain concepts (e.g., *"prescription code"*, *"pill sequence number"*, *"dose schedule key"*) and save all file, function, and variable names for Sections 2 and 3.
    - Never place a `⚠️ Defect Alert` at the top of Section 1 before the reader understands the domain and code steps; place `⚠️ Defect Alert` at the **top of Section 4 (`Verification & Hidden Risks`)** after Section 3.
    - Only output a `Change Map` when a commit genuinely bundles **multiple unrelated features/concerns** (e.g., changing payment UI + changing report export in one commit). If client, server, and test files in a commit all solve **one cohesive problem**, never print a `Change Map`.
 2. **No Wall-of-Prose — Contrastive Why + Visual Arrow (`->`) Dry-Run:**
    - Below each code snippet in Section 3, keep **only 2 items** (never add a separate 3rd `If omitted` bullet that repeats the failure):
-     1. **Contrastive Why (Why not the naive approach / what breaks without it):** At most 2 concise sentences explaining why the simpler/naive approach `[Q]` (or omitting this check) fails (`[State A] -> [Intermediate state B] -> [Failure C]`) and why `[P]` prevents it.
+     1. **Contrastive Why (Why not the naive approach / what breaks without it):** At most 2 concise sentences explaining why the simpler/naive approach (or omitting this check) fails (`State A -> Intermediate state B -> Failure C`, written as natural clauses without literal `[...]` brackets) and why the chosen check prevents it.
      2. **Visual Dry-Run:** Format strictly as **2–3 sub-bullets using arrows (`->`)** with short, memorable sample values (never write a dense 100-word prose paragraph or use cryptic test IDs):
         - *Standard synchronous logic:* Trace 1–2 concrete inputs (`Case 1: input = "Order_A", id = "1" -> builds scopedId = "Order_A_1" -> Kept`).
         - *Async, concurrency, lock, or lifecycle cleanup logic (`async/await`, `race condition`, `useEffect` cleanup, `AbortController`, debounce):* Format as an **Interleaved Timeline (`t1 -> t2 -> t3`)** showing overlapping events (e.g., `t1: Request A starts -> t2: User switches tab, cleanup sets cancelled = true -> t3: Stale Request A resolves, hits cancelled guard, and exits without overwriting state`).
@@ -67,18 +68,27 @@ Build codebase mental models and debugging intuition from code changes by limiti
 
 Localize the 5 section titles and bullet labels below into the user's language (single-language labels only):
 
-### 1. Big Picture (Context-Adaptive — Macro / System Behavior Level)
-Explain the causal chain at the **Macro / System behavior level** (leaving Micro / variable- and line-level mechanics for Section 3). Always start directly with the 4 bullets below (only prepend a `Change Map` if the commit mixes unrelated features):
+### 1. Big Picture (Context-Adaptive — 100% Plain-Language Macro Story)
+Explain the causal chain at the **Macro / System behavior level** using **100% plain-language domain concepts**—never mention file names, function names, or local variable/property names (`p.id`, `scopedId`, `legacyKey`, etc.) in the 3 prose bullets below (leave all code symbols for Sections 2 and 3). Always start directly with the 4 bullets below (only prepend a `Change Map` if the commit mixes unrelated features):
 - **For Bug Fixes / Performance Fixes:**
-  - **Symptom:** Describe the user-visible bug or bottleneck clearly.
-  - **Root cause:** Open with a 1-sentence everyday analogy, then trace the macro **Causal Domino Chain** (`[Trigger/State A] -> [Intermediate system state B] -> [Concrete failure C]`) and contrast why the naive system assumption fails.
-  - **Fix:** State the high-level architectural/logic mechanism changed (`[Solution D]`) and where.
-  - **Concrete example (`Before -> After`):** A 2–4 line noise-free snippet showing the core transformation of the commit.
+  - **Symptom:** Describe the user-visible bug or bottleneck clearly in plain words.
+  - **Root cause:** Open with a 1-sentence everyday analogy, then trace the macro **Causal Domino Chain** (`Trigger A -> Intermediate state B -> Concrete failure C`) as natural plain-language clauses joined by `->` (**never wrap prose clauses in literal `[...]` brackets**).
+  - **Fix:** State the high-level conceptual solution in plain words without listing file, function, or variable names.
+  - **Concrete example (`Before -> After`):** A 3–6 line snippet that **visually shows the collision, overwrite, or transformation happening** across 2 concrete items with vivid sample names (never write a single abstract assignment like `doseId = ...`):
+    ```ts
+    // Before: Both prescriptions use pill number "1", so the second overwrites the first
+    doses["1_Morning_0730"] = "Plavix (Heart Rx)";
+    doses["1_Morning_0730"] = "Klacid (Lung Rx)"; // <- Wipes out Plavix!
+
+    // After: Prefixing the prescription name keeps both morning doses separate
+    doses["HeartRx_1_Morning_0730"] = "Plavix (Heart Rx)";
+    doses["LungRx_1_Morning_0730"]  = "Klacid (Lung Rx)"; // <- Both kept!
+    ```
 - **For New Features / Refactors / Existing Module Walkthroughs:**
-  - **Goal:** State the capability or architectural outcome being built.
-  - **Key design challenge:** Use a **Contrastive Explanation** and macro **Causal Domino Chain** (`[State A] -> [Intermediate system state B] -> [Failure C]`) to explain why the obvious/naive approach `[Q]` falls short (with a 1-sentence everyday analogy if helpful).
-  - **Core approach:** Summarize how the chosen design `[P]` solves that challenge (`[Solution D]`).
-  - **Concrete example (`Input -> Output`):** A 2–4 line noise-free snippet illustrating what enters and exits the module.
+  - **Goal:** State the capability or architectural outcome being built in plain words.
+  - **Key design challenge:** Use a **Contrastive Explanation** and macro **Causal Domino Chain** (`Trigger A -> Intermediate state B -> Concrete failure C`, without literal `[...]` brackets) to explain why the obvious/naive approach falls short (with a 1-sentence everyday analogy if helpful).
+  - **Core approach:** Summarize how the chosen design solves that challenge in plain words (zero file, function, or variable names).
+  - **Concrete example (`Input -> Output`):** A 3–6 line noise-free snippet with vivid sample values illustrating what enters and exits the system.
 
 ### 2. Main Execution Flow (3–4 steps anchored to Real-World User / Business or Runtime System Triggers)
 - A numbered list of 3–4 plain-language steps where each step opens with the **real-world user action or business scenario** that triggers it (or, for pure infrastructure/plumbing/low-level utilities without direct user interaction, the **runtime or caller system event** that invokes it), tracing how data moves to the core change and naming **at most 2–3 primary functions** (or, for declarative code like SQL, Schema, Config, and CSS/UI without a sequential call stack, **3–4 Data Transformation Phases or Constraint Layers**).
@@ -124,7 +134,7 @@ For each step (`#### Step 1: [Practical technical question?]`, plus `Step 2` / `
 
 - **Ungrounded or missing Domain Model context:** Guessing the business meaning of undocumented internal codes as fact instead of labeling them an *inferred hypothesis*, forcing a fake end-user UI story onto a pure infrastructure diff instead of using a Runtime/System trigger, or omitting real-world triggers, divergent domain reasons, and user impact across Sections 2–4.
 - **Incomplete Section 4 audit or bare breakpoint:** Skipping the check for unseen callers, persisted-data compatibility, silent-failure `catch`/`fallback` blocks, `O(N^2)`/`N+1` scale traps, cross-file co-change rules, or suggesting a bare `breakpoint` line without the exact state invariant to inspect.
-- **Premature complexity at the top of Section 1:** Putting a `⚠️ Defect Alert` before Section 3, or printing a `Change Map` for a single-purpose commit where client/server/test files all solve the same problem.
+- **Premature complexity or code-symbol soup in Section 1:** Mentioning file names, function names, or local variable names (`p.id`, `scopedId`, `legacyKey`) in Section 1 prose bullets, wrapping `->` clauses in literal `[...]` brackets, writing a 1-line `doseId = ...` assignment in `Before -> After` instead of showing 2 items colliding/transforming, putting a `⚠️ Defect Alert` before Section 3, or printing a `Change Map` for a single-purpose commit.
 - **Wall-of-prose Dry-Run or 3rd `If omitted` bullet in Section 3:** Writing a dense paragraph for the dry-run instead of 2–3 arrow (`->`) bullets with short, memorable sample names (or `t1 -> t2 -> t3` for async/concurrency), or keeping a separate `If omitted` bullet that repeats the `Contrastive Why`.
 - **Missing concrete example in complex code comments:** Leaving a long string interpolation or regex in Section 3 without an evaluated example string in its inline comment.
 - **Telegraphic compression / skipped causal links:** Jumping directly from cause `[A]` to solution `[D]` without spelling out intermediate state `[B]` and concrete failure `[C]`.

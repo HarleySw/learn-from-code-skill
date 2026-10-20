@@ -1,7 +1,7 @@
 # learn-from-code
 
 [![skills.sh](https://skills.sh/b/HarleySw/learn-from-code-skill)](https://skills.sh/HarleySw/learn-from-code-skill)
-[![Version](https://img.shields.io/badge/version-1.8.0-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
+[![Version](https://img.shields.io/badge/version-1.9.0-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Agent Skills](https://img.shields.io/badge/standard-agentskills.io-purple.svg)](https://agentskills.io/)
 
@@ -35,7 +35,7 @@ Passive explanations fail software teams:
 
 * **Zero Split-Attention:** Explanations of boundary conditions, magic numbers, and regex groups live **strictly inside short inline comments** in the code snippet—never duplicated in prose above the code.
 * **Bridge Domain & Program Models (Zero Domain Hallucination):** Anchors code mechanics to the **real-world business event** (or **Runtime/System trigger** for pure infrastructure diffs) and verifies internal domain codes against repo docs/tests before explaining—explicitly labeling undocumented codes as *inferred hypotheses* rather than guessing.
-* **Causal Domino Chain (`A -> B -> C`):** Explains *why* naive alternatives fail (`[Trigger A] -> [Intermediate state B] -> [Concrete failure C]`), not just what line changed.
+* **Causal Domino Chain (`A -> B -> C`):** Explains *why* naive alternatives fail (`Trigger A -> Intermediate state B -> Concrete failure C`), not just what line changed.
 * **Interleaved Timelines for Async/Concurrency:** Renders async lifecycles, abort controllers, locks, and race conditions as chronologically interleaved timelines (`t1 -> t2 -> t3`).
 * **Unseen Caller, Persisted-Data, Unhappy-Path & Scale Audit:** Scans immediate callers **outside the `git diff`**, checks backward compatibility with existing persisted data (`localStorage`/DB/cache/URL) whenever key formats or schemas change, audits `catch`/`fallback` blocks for silent failures, and flags `O(N^2)` / `N+1` scale bottlenecks.
 * **Delocalized Co-Change Warnings:** Explicitly calls out split or mirrored logic across files (client vs. server, producer vs. consumer) with clear synchronization rules to prevent state drift.
@@ -103,7 +103,7 @@ Use learn-from-code in Mode B to implement the payment retry backoff logic.
 
 Every Mode A explanation follows a standardized, predictable recipe:
 
-1. **Big Picture (Problem & Core Idea):** Symptom, everyday root-cause analogy, fix summary, and a noise-free 2–4 line `Before -> After` snippet.
+1. **Big Picture (100% Plain-Language Macro Story):** Symptom, everyday root-cause analogy with natural `->` cause-and-effect chain, plain-language fix summary (zero file/function/variable names), and a 3–6 line `Before -> After` snippet visually showing 2 items colliding or transforming.
 2. **Main Execution Flow:** 3–4 steps opening with the real-world user/business trigger, naming at most 2–3 primary functions.
 3. **Core Code Steps (`Step 1 -> Step 2 -> Step 3`):** Up to 3 chronological steps with inline code annotations, a 2-sentence *Contrastive Why* (why naive approach fails), and a *Visual Dry-Run* (`input -> output` or `t1 -> t2 -> t3` timeline).
 4. **Verification & Hidden Risks:** High-priority `⚠️ Defect Alert` (if bugs/unseen caller breakages exist), followed by verified facts with a `breakpoint` (`file:line` + exact **state invariant** to inspect), unverified domain risks, and cross-file **co-change coupling** rules.
@@ -132,7 +132,7 @@ Every Mode A explanation follows a standardized, predictable recipe:
 learn-from-code-skill/
 ├── skills/
 │   └── learn-from-code/
-│       └── SKILL.md       # Core specification & prompt contract (v1.8.0)
+│       └── SKILL.md       # Core specification & prompt contract (v1.9.0)
 ├── LICENSE                # MIT License
 └── README.md              # Documentation & quickstart guide
 ```
