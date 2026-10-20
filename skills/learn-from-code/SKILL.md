@@ -4,7 +4,7 @@ description: Use when the user asks to explain recent code changes, review a git
 license: MIT
 metadata:
   author: HarleySw
-  version: "1.9.0"
+  version: "2.0.0"
 ---
 
 # Learn From Code
@@ -25,10 +25,15 @@ Build codebase mental models and debugging intuition from code changes by limiti
 3. **Natural Developer Code-Switching (Never Over-Translate Core Terms):**
    - Preserve universal technical terms that native developers use daily (`git diff`, `commit`, `race condition`, `deadlock`, `in-place`, `offset`, `stream`, `buffer`, `fallback`, `edge case`, `breakpoint`, `unit test`, `mock`, `payload`, `thread`, `async/await`) instead of forcing stiff literal translations.
    - For unfamiliar domain-specific or low-level protocol identifiers, keep the original identifier and attach a brief 2–4 word plain-language explanation on first mention.
-4. **Mechanical Plain-Language Syntax (`Concrete Actor + Strong Action Verb`, `One Word = One Meaning`, `Old-Before-New`):**
-   - **Concrete Actor + Strong Action Verb (Zero Zombie Nouns):** Make every sentence subject a concrete actor (`User`, `Function X`, `Variable Y`, `Loop`, `Database`) paired directly with a strong action verb (`overwrites`, `drops`, `blocks`, `prefixes`, `skips`). Never turn verbs into abstract nominalizations ("zombie nouns") or open sentences with wrapper phrases (*"The implementation of..."*, *"The execution of..."*, *"Việc thực hiện..."*, *"Sự cô lập của..."*, *"Cơ chế xử lý..."*):
+4. **Mechanical Plain-Language Syntax (`Concrete Actor + Strong Action Verb`, `One Word = One Meaning`, `Zero Translationese`):**
+   - **Concrete Actor + Strong Action Verb (Zero Zombie Nouns):** Make every sentence subject a concrete actor (`User`, `Schedule screen`, `AI Assistant`, `Function X`, `Loop`) paired directly with a strong action verb (`overwrites`, `skips`, `blocks`, `prefixes`) following `Who/What -> Does what to which specific item -> When`. Never turn verbs into abstract nominalizations ("zombie nouns") or open sentences with wrapper phrases (*"The implementation of..."*, *"The execution of..."*, *"Việc thực hiện..."*, *"Sự cô lập của..."*, *"Cơ chế xử lý..."*):
      - ❌ *Bad (Abstract / Zombie Nouns):* `"The implementation of prefixing performs the isolation of identifiers to prevent the occurrence of data collision."`
      - ✅ *Good (Actor + Action Verb):* `"Prefixing pres.id gives each prescription a unique key so prescription B never overwrites prescription A."`
+   - **Ban "Translationese" and Literal Calques (Use Everyday Spoken Developer Words):** When responding in a non-English language (e.g., Vietnamese), write exactly as a native developer speaks aloud to a coworker at their desk—never translate English metaphors word-by-word or use stiff academic calques:
+     - Never translate `drop/miss` as *"làm rơi"* -> use *"bỏ sót / bỏ qua không đọc"*.
+     - Never translate `isolate` as *"cô lập"* -> use *"tách riêng / tạo mã riêng cho từng..."*.
+     - Never translate `deduplicate` as *"khử trùng lặp"* -> use *"lọc bỏ phần tử bị lặp"*.
+     - Never translate `preserve` as *"bảo toàn"* -> use *"giữ nguyên"*.
    - **One Word, One Meaning (Zero Synonym Rotation):** Once you name a domain entity or technical concept in the first sentence, use that exact term throughout the entire response—never rotate synonyms for stylistic variety.
    - **One Idea Per Sentence (Max 25 Words) & `Old-Before-New` Chaining:** Limit each prose sentence to 1 main action (20–25 words max); use arrows (`->`) without literal `[...]` brackets or split into two short sentences instead of nesting 3–4 clauses. When chaining two sentences, open sentence 2 with the variable or result produced at the end of sentence 1 (*"Function A builds string X. Using string X, Function B checks..."*).
 
@@ -71,9 +76,10 @@ Localize the 5 section titles and bullet labels below into the user's language (
 ### 1. Big Picture (Context-Adaptive — 100% Plain-Language Macro Story)
 Explain the causal chain at the **Macro / System behavior level** using **100% plain-language domain concepts**—never mention file names, function names, or local variable/property names (`p.id`, `scopedId`, `legacyKey`, etc.) in the 3 prose bullets below (leave all code symbols for Sections 2 and 3). Always start directly with the 4 bullets below (only prepend a `Change Map` if the commit mixes unrelated features):
 - **For Bug Fixes / Performance Fixes:**
-  - **Symptom:** Describe the user-visible bug or bottleneck clearly in plain words.
+  - **Symptom:** Describe the **concrete scene the user actually sees on screen** using specific sample names/times—never use compressed abstract noun phrases (like *"loses overlapping slots"* or *"drops subsequent items"*). If a bug causes 2 symptoms on 2 different screens/features, split them into **2 separate sub-bullets** (never cram both into one sentence with *"simultaneously / đồng thời / and"*):
+    - *Example:* Instead of *"The AI drops subsequent items and the schedule loses overlapping slots"*, write two sub-bullets: (1) *On the AI Assistant:* AI reads only the Heart prescription and skips all pills in the Lung prescription; (2) *On the Schedule screen:* If the patient takes both a Heart pill and a Lung pill at 07:30 AM, the screen shows only 1 pill and the other disappears.
   - **Root cause:** Open with a 1-sentence everyday analogy, then trace the macro **Causal Domino Chain** (`Trigger A -> Intermediate state B -> Concrete failure C`) as natural plain-language clauses joined by `->` (**never wrap prose clauses in literal `[...]` brackets**).
-  - **Fix:** State the high-level conceptual solution in plain words without listing file, function, or variable names.
+  - **Fix:** State the high-level conceptual solution in everyday spoken words without listing file, function, or variable names.
   - **Concrete example (`Before -> After`):** A 3–6 line snippet that **visually shows the collision, overwrite, or transformation happening** across 2 concrete items with vivid sample names (never write a single abstract assignment like `doseId = ...`):
     ```ts
     // Before: Both prescriptions use pill number "1", so the second overwrites the first
@@ -98,19 +104,19 @@ For each step (`#### Step 1: [Practical technical question?]`, plus `Step 2` / `
 - **1–2 plain-language transition sentences** connecting this step to the previous one, stating the **Business Rule / Domain Invariant** this step protects (and, if another module in the commit treats the same entity differently, why the business domain requires that difference).
 - **Short code snippet (8–18 lines):** Put all explanations of non-obvious variables, magic numbers, array/regex indices, bitmasks, or boundary conditions directly in inline comments (in the user's language) above/beside the code lines. For long string interpolations, regexes, or complex expressions, include a **concrete evaluated example** inside the comment (e.g., `// Match full key (e.g. k === "OrderA_1_Morning_0730")`).
 - **Focused explanation below the code (2 items only, localized to the user's language):**
-  - **Contrastive Why (Why not the naive approach / what breaks if omitted):** At most 2 concise sentences explaining why the simpler/naive approach (or omitting this step) fails and what concrete bug occurs in practice.
+  - **Contrastive Why (Why not naive `[Q]` / what breaks if omitted):** At most 2 concise sentences explaining why the simpler/naive approach `[Q]` (or omitting this step) fails and what concrete bug occurs in practice.
   - **Visual Dry-Run:** 2–3 sub-bullets using arrows (`->`) and short, memorable sample values tracing how the input evaluates across the variables and branches to the final result (or an **Interleaved Timeline `t1 -> t2 -> t3`** for async/concurrency/cleanup code).
 
 ### 4. Verification & Hidden Risks
 - **`⚠️ Defect Alert` *(Only if a bug/flaw exists in the diff or its unseen callers)*:** Before writing Section 4, audit immediate callers/consumers **outside the `git diff`**, error-handling branches (`catch`, `?.`, default `fallback`—checking whether they degrade gracefully or silently swallow errors and corrupt domain state without logging), and production-scale complexity (`O(N^2)` nested `.find()`/`.includes()` loops or `N+1` queries that look harmless in a 2-item dry-run). If any logic bug, silent failure, `race condition`, leak, scale trap, or contract break exists, highlight it right here at the top of Section 4 (pinpointing the exact line, failure scenario with `->` steps, real-world domain impact, and fix)—and never praise broken/silent-failure code as "defensive" in Section 3.
 - **Verified:** 1 bullet on what is proven to work + a 1-line **Quick verification** specifying an exact `breakpoint` (`file:line`) accompanied by the concrete **State Invariant / expression** to inspect to verify state is not infected/corrupted (e.g., `breakpoint at file.ts:131: verify Object.keys(doses) all carry ${prescriptionId}_ prefix`), plus any relevant test command or visual check.
-- **Assumptions & Risks:** 1–2 bullets on remaining unverified `edge cases`, unseen caller assumptions, **persisted-data backward compatibility** (whenever an ID/Key format, state shape, or schema in `localStorage`/DB/cache/session/URL changes, whether existing saved user data will fail or need migration), or **scale/unhappy-path risks**, explicitly stating both the **technical trigger** and the **real-world business/user consequence** if violated. If twin logic, shared key formats, or producer-consumer contracts span multiple files (e.g., Client API vs. Server Service), explicitly mandate the cross-file sync rule: *"If modifying `<logic>` in `<File A>` later, `<File B>` must be updated synchronously to prevent state drift."*
+- **Assumptions & Risks:** 1–2 bullets on remaining unverified `edge cases`, unseen caller assumptions, **persisted-data backward compatibility** (whenever an ID/Key format, state shape, or schema in `localStorage`/DB/cache/session/URL changes, whether existing saved user data will fail or need migration), or **scale/unhappy-path risks**, explicitly stating both the **technical trigger** and the **real-world business/user consequence** if violated. If twin logic, shared key formats, or producer-consumer contracts span multiple files (e.g., Client API vs. Server Service), explicitly mandate the cross-file sync rule: *"If modifying logic [X] in [File A] later, [File B] must be updated synchronously to prevent state drift."*
 
 ### 5. Debugging Check (1–2 short questions)
 - Ask **1–2 single-focus debugging or boundary questions** (answerable in 2–3 sentences).
 - **Only ask about code shown in Section 3:** Every question must target a specific condition or line visible in the Section 3 snippets (never ask about unseen helper functions or omitted lines) and quote that condition inline so the user never has to scroll up or open another file.
 - **Wait for the user's reply** before giving the answers.
-- *(Optional)* Add a 5-bullet repo gotcha note **only** if omitting it would cause a bug next month (especially cross-file synchronization rules: *"If modifying `<logic>` in `<File A>` later, you must synchronously update `<File B>` to prevent state divergence"*) and it is not already recorded in project memory; ask before writing to repo files.
+- *(Optional)* Add a 5-bullet repo gotcha note **only** if omitting it would cause a bug next month (especially cross-file synchronization rules: *"If modifying logic [X] in file [A] later, you must synchronously update file [B] to prevent state divergence"*) and it is not already recorded in project memory; ask before writing to repo files.
 
 ## Edge Case & Multi-Turn Rules
 
@@ -137,9 +143,9 @@ For each step (`#### Step 1: [Practical technical question?]`, plus `Step 2` / `
 - **Premature complexity or code-symbol soup in Section 1:** Mentioning file names, function names, or local variable names (`p.id`, `scopedId`, `legacyKey`) in Section 1 prose bullets, wrapping `->` clauses in literal `[...]` brackets, writing a 1-line `doseId = ...` assignment in `Before -> After` instead of showing 2 items colliding/transforming, putting a `⚠️ Defect Alert` before Section 3, or printing a `Change Map` for a single-purpose commit.
 - **Wall-of-prose Dry-Run or 3rd `If omitted` bullet in Section 3:** Writing a dense paragraph for the dry-run instead of 2–3 arrow (`->`) bullets with short, memorable sample names (or `t1 -> t2 -> t3` for async/concurrency), or keeping a separate `If omitted` bullet that repeats the `Contrastive Why`.
 - **Missing concrete example in complex code comments:** Leaving a long string interpolation or regex in Section 3 without an evaluated example string in its inline comment.
-- **Telegraphic compression / skipped causal links:** Jumping directly from cause A to solution D without spelling out intermediate state B and concrete failure C.
+- **Telegraphic compression / skipped causal links:** Jumping directly from cause `[A]` to solution `[D]` without spelling out intermediate state `[B]` and concrete failure `[C]`.
 - Any dual-language header or bullet label in the format `<Local Label> (<English Label>):`.
-- **Zombie nouns, synonym rotation, or >25-word multi-clause prose sentences:** Opening sentences with abstract wrapper nouns (*"The implementation of..."*, *"Việc thực hiện..."*) instead of `Concrete Actor + Action Verb`, rotating synonyms for the same domain entity, or writing 40-word nested sentences instead of splitting or using `->`.
+- **Zombie nouns, translationese calques, abstract compression, synonym rotation, or >25-word multi-clause sentences:** Opening sentences with abstract wrapper nouns (*"The implementation of..."*, *"Việc thực hiện..."*), using stiff literal calques (*"làm rơi thuốc"*, *"cô lập định danh"*, *"khử trùng lặp"*, *"bảo toàn trạng thái"*), compressing screen symptoms into vague noun phrases (*"làm mất các cữ uống trùng giờ"*) or joining 2 screens with *"đồng thời"*, rotating synonyms for the same domain entity, or writing 40-word nested sentences.
 - Over-translating standard developer terms (`git diff`, `commit`, `race condition`, `deadlock`, `in-place`, `offset`, `stream`, `buffer`, `fallback`, `edge case`, `breakpoint`, `unit test`, `mock`, `payload`, `thread`, `async/await`).
 - Explaining non-obvious variables, magic numbers, array/regex indices, bitmasks, or boundary conditions in prose above the code AND again inside the code.
 - Listing more than 3 function names in Section 2 (Main Execution Flow).

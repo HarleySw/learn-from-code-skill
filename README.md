@@ -1,7 +1,7 @@
 # learn-from-code
 
 [![skills.sh](https://skills.sh/b/HarleySw/learn-from-code-skill)](https://skills.sh/HarleySw/learn-from-code-skill)
-[![Version](https://img.shields.io/badge/version-1.9.0-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Agent Skills](https://img.shields.io/badge/standard-agentskills.io-purple.svg)](https://agentskills.io/)
 
@@ -132,7 +132,7 @@ Every Mode A explanation follows a standardized, predictable recipe:
 learn-from-code-skill/
 ├── skills/
 │   └── learn-from-code/
-│       └── SKILL.md       # Core specification & prompt contract (v1.9.0)
+│       └── SKILL.md       # Core specification & prompt contract (v2.0.0)
 ├── LICENSE                # MIT License
 └── README.md              # Documentation & quickstart guide
 ```
