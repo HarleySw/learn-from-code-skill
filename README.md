@@ -39,7 +39,7 @@ npx skills add HarleySw/learn-from-code-skill
 Install globally for all supported agents (Claude Code, Cursor, Antigravity, Gemini CLI, Codex, OpenCode, GitHub Copilot):
 
 ```bash
-npx skills add HarleySw/learn-from-code-skill -g
+npx skills add -g HarleySw/learn-from-code-skill
 ```
 
 ## Usage

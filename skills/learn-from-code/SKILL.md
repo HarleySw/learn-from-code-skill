@@ -26,58 +26,61 @@ Build codebase mental models and debugging intuition from code changes by limiti
 
 ## Core Readability & Cognitive Load Rules
 
-1. **Unbroken Causal Domino Chains (No Telegraphic Compression):**
-   - Conciseness means limiting the **number of topics** (at most 3 core steps, skipping peripheral boilerplate), **not** chopping sentences into cryptic one-liners.
-   - Whenever explaining any mechanism or condition in Section 1 and Section 3, never skip intermediate reasoning steps. Spell out the full **Causal Domino Chain**: `[Trigger/State A occurs] -> [Produces intermediate state B] -> [Left unchecked, causes concrete failure C] -> [Therefore the code applies solution D]`. Never force the reader to guess the missing link between `A` and `D`.
-2. **Contrastive Explanation (`Why [P] Instead of Naive [Q]?`):**
-   - Unilateral descriptions (merely stating what the code does) do not build deep intuition. In Section 1 (`Root cause` / `Key design challenge`) and in every step of Section 3, always explain by contrasting against the intuitive baseline: *"Why not take the simpler/obvious approach `[Q]` that a developer would normally try first? Because doing `[Q]` causes `[failure X]`, which is why this code must use `[P]` instead."*
-3. **Concrete Value Dry-Run (Mental Debugger Trace):**
-   - Below each code snippet in Section 3, instead of abstract verbal theory, walk through a **Concrete Value Dry-Run** in 2–4 natural sentences: pick 1 realistic sample input, plug those actual values into the snippet's variables, and trace how they pass through the `if/else` branches or transformations to produce the final return value as if stepping through a debugger.
-4. **Zero Split-Attention (Explain Variables Inside Code, Not Above It):**
+1. **No Premature Complexity (Start Directly With the Problem):**
+   - Section 1 (`Big Picture`) must **always** open directly with `Symptom -> Root cause -> Fix -> Concrete example` (or `Goal -> Key design challenge -> Core approach -> Concrete example`).
+   - Never place a `⚠️ Defect Alert` at the top of Section 1 before the reader understands the domain and code steps; place `⚠️ Defect Alert` at the **top of Section 4 (`Verification & Hidden Risks`)** after Section 3.
+   - Only output a `Change Map` when a commit genuinely bundles **multiple unrelated features/concerns** (e.g., changing payment UI + changing report export in one commit). If client, server, and test files in a commit all solve **one cohesive problem**, never print a `Change Map`.
+2. **No Wall-of-Prose — Contrastive Why + Visual Arrow (`->`) Dry-Run:**
+   - Below each code snippet in Section 3, keep **only 2 items** (never add a separate 3rd `If omitted` bullet that repeats the failure):
+     1. **Contrastive Why (Why not the naive approach / what breaks without it):** At most 2 concise sentences explaining why the simpler/naive approach `[Q]` (or omitting this check) fails (`[State A] -> [Intermediate state B] -> [Failure C]`) and why `[P]` prevents it.
+     2. **Visual Dry-Run:** Format strictly as **2–3 sub-bullets using arrows (`->`)** with short, memorable sample values (never write a dense 100-word prose paragraph or use cryptic test IDs). Example shape:
+        - Case 1 (`input = "Order_A"`, `id = "1"`) -> builds `scopedId = "Order_A_1"` -> Kept.
+        - Case 2 (`input = "Order_B"`, `id = "1"`) -> builds `scopedId = "Order_B_1"` (distinct from `"Order_A_1"`) -> Both kept!
+3. **Concrete Evaluated Examples Inside Inline Code Comments:**
    - Put all explanations of non-obvious variables, magic numbers, array/regex indices, bitmasks, or boundary conditions directly into short inline comments inside the code snippet in the user's language.
-   - Never repeat prose summaries of variables above the code, and never use repetitive sub-headers inside learning points.
-5. **Working Memory Cap (Max 3 Function Names in Flow):**
+   - Whenever a code line contains a long string interpolation, complex regex, or multi-part expression, the inline comment right above that line **must include a concrete evaluated example string/value** so the reader grasps the result in 1 second without mentally parsing the expression.
+   - Never repeat prose summaries of variables above the code.
+4. **Working Memory Cap (Max 3 Function Names in Flow):**
    - In the execution flow section, summarize the pipeline in **3–4 plain-language action steps** naming **at most 2–3 main functions**. Do not dump 6–8 internal helper names or low-level spec operators at once.
-6. **Noise-Free `Before -> After` / `Input -> Output` Data Examples:**
+5. **Noise-Free `Before -> After` / `Input -> Output` Data Examples:**
    - Replace irrelevant boilerplate, unchanged fields, or verbose parameters with `...` so the reader spots the exact transformation in 3 seconds.
-7. **Chronological Story Pipeline (`Step 1 -> Step 2 -> Step 3`):**
+6. **Chronological Story Pipeline (`Step 1 -> Step 2 -> Step 3`):**
    - Order the steps chronologically along the actual data or execution flow (`Step 1 -> Step 2 -> Step 3`) and title each step with the practical technical question that step resolves.
-8. **Link Once Per Section:**
+7. **Link Once Per Section:**
    - Link a file or symbol only on its **first appearance** in a section. Do not spam clickable links on every line.
 
 ## 5-Section Output Contract (Mode A Recipe)
 
 Localize the 5 section titles and bullet labels below into the user's language (single-language labels only):
 
-### 1. Big Picture (Context-Adaptive)
-*(If applicable, prepend **`⚠️ Defect Alert`** or **`Change Map`** per the Edge Case Rules below.)*
-Select the label set that matches the code context:
+### 1. Big Picture (Context-Adaptive — Macro / System Behavior Level)
+Explain the causal chain at the **Macro / System behavior level** (leaving Micro / variable- and line-level mechanics for Section 3). Always start directly with the 4 bullets below (only prepend a `Change Map` if the commit mixes unrelated features):
 - **For Bug Fixes / Performance Fixes:**
   - **Symptom:** Describe the user-visible bug or bottleneck clearly.
-  - **Root cause:** Open with a 1-sentence everyday analogy, then trace the unbroken **Causal Domino Chain** (`[Trigger/State A] -> [Intermediate state B] -> [Concrete failure C]`) and contrast why the naive assumption fails.
-  - **Fix:** State how the code resolves that chain (`[Solution D]`) and where.
+  - **Root cause:** Open with a 1-sentence everyday analogy, then trace the macro **Causal Domino Chain** (`[Trigger/State A] -> [Intermediate system state B] -> [Concrete failure C]`) and contrast why the naive system assumption fails.
+  - **Fix:** State the high-level architectural/logic mechanism changed (`[Solution D]`) and where.
   - **Concrete example (`Before -> After`):** A 2–4 line noise-free snippet showing the core transformation of the commit.
 - **For New Features / Refactors / Existing Module Walkthroughs:**
   - **Goal:** State the capability or architectural outcome being built.
-  - **Key design challenge:** Use a **Contrastive Explanation** and unbroken **Causal Domino Chain** (`[State A] -> [Intermediate state B] -> [Failure C]`) to explain why the obvious/naive approach `[Q]` falls short (with a 1-sentence everyday analogy if helpful).
+  - **Key design challenge:** Use a **Contrastive Explanation** and macro **Causal Domino Chain** (`[State A] -> [Intermediate system state B] -> [Failure C]`) to explain why the obvious/naive approach `[Q]` falls short (with a 1-sentence everyday analogy if helpful).
   - **Core approach:** Summarize how the chosen design `[P]` solves that challenge (`[Solution D]`).
   - **Concrete example (`Input -> Output`):** A 2–4 line noise-free snippet illustrating what enters and exits the module.
 
 ### 2. Main Execution Flow (3–4 steps)
-- A numbered list of 3–4 plain-language steps tracing how data moves from the caller to the core change, naming **at most 2–3 primary functions** (or **3–4 Data Transformation / Constraint Layers** for declarative code).
+- A numbered list of 3–4 plain-language steps tracing how data moves from the caller to the core change, naming **at most 2–3 primary functions** (or, for declarative code like SQL, Schema, Config, and CSS/UI without a sequential call stack, **3–4 Data Transformation Phases or Constraint Layers** such as *Step 1: Data sources & JOINs -> Step 2: Filtering & grouping -> Step 3: Output projections*).
 
-### 3. Core Code Steps (1 to 3 steps, scaled to diff complexity)
+### 3. Core Code Steps (1 to 3 steps, scaled to diff complexity — Micro / Code Level)
 For each step (`#### Step 1: [Practical technical question?]`, plus `Step 2` / `Step 3` only when distinct engineering decisions exist):
 - **1 plain-language transition sentence** connecting this step to the previous one.
-- **Short code snippet (8–18 lines):** Put all explanations of non-obvious variables, magic numbers, array/regex indices, bitmasks, or boundary conditions directly in inline comments (in the user's language) above/beside the code lines.
-- **Focused explanation below the code (localized to the user's language):**
-  - **Contrastive Why (`Why [P] instead of naive [Q]`):** Trace the unbroken **Causal Domino Chain** showing why the simpler/obvious approach `[Q]` fails (`[State A] -> [Intermediate state B] -> [Failure C]`), and why the code must use `[P]` (`[Solution D]`) instead.
-  - **Concrete Dry-Run:** In 2–4 natural sentences, take 1 concrete sample input, plug its values into the variables in the snippet, and walk the reader through how it evaluates across the `if/else` conditions or transformations to return the final result.
-  - **If omitted:** What concrete bug or runtime failure occurs in practice if this guard or step is removed.
+- **Short code snippet (8–18 lines):** Put all explanations of non-obvious variables, magic numbers, array/regex indices, bitmasks, or boundary conditions directly in inline comments (in the user's language) above/beside the code lines. For long string interpolations, regexes, or complex expressions, include a **concrete evaluated example** inside the comment (e.g., `// Match full key (e.g. k === "OrderA_1_Morning_0730")`).
+- **Focused explanation below the code (2 items only, localized to the user's language):**
+  - **Contrastive Why (Why not naive `[Q]` / what breaks if omitted):** At most 2 concise sentences explaining why the simpler/naive approach `[Q]` (or omitting this step) fails and what concrete bug occurs in practice.
+  - **Visual Dry-Run:** 2–3 sub-bullets using arrows (`->`) and short, memorable sample values tracing how the input evaluates across the variables and branches to the final result.
 
 ### 4. Verification & Hidden Risks
-- **Verified:** 1 bullet on what is proven to work + a 1-line **Quick verification** (exact `breakpoint` line, log, or visual check).
-- **Assumptions & Risks:** 1–2 bullets on unverified `edge cases` or library upgrade risks.
+- **`⚠️ Defect Alert` *(Only if a bug/flaw exists in the diff)*:** If the code introduces a logic bug, `race condition`, memory/resource leak, or security flaw, highlight it right here at the top of Section 4 (pinpointing the exact line from Section 3, failure scenario with `->` steps, and fix)—and do not repeat it in the bullets below.
+- **Verified:** 1 bullet on what is proven to work + a 1-line **Quick verification** (exact `breakpoint` line, test command, or visual check).
+- **Assumptions & Risks:** 1–2 bullets on remaining unverified `edge cases` or library upgrade risks.
 
 ### 5. Debugging Check (1–2 short questions)
 - Ask **1–2 single-focus debugging or boundary questions** (answerable in 2–3 sentences).
@@ -87,23 +90,15 @@ For each step (`#### Step 1: [Practical technical question?]`, plus `Step 2` / `
 
 ## Edge Case & Multi-Turn Rules
 
-1. **Untangle & Focus on the Main Slice (Tangled / Large Multi-File Commits):**
-   - When a commit touches many files or bundles multiple independent concerns, **never** force unrelated changes into a single artificial 3-step story.
-   - At the very top of Section 1, output a brief **Change Map** (2–4 bullets) grouping modified files into:
-     - **Core Logic:** 1–2 files containing the primary algorithmic or architectural change.
-     - **Mechanical Callers / Wiring:** Files that only update function signatures, imports, or parameter passing.
-     - **Unrelated Slices:** Independent features or refactors (ignoring formatting/lockfiles).
-   - Deep-dive into **only the single most critical/risky Core Logic slice** (staying within a 200–400 LOC cognitive budget) across Sections 1–5, and ask at the end whether the user wants to move to the next independent slice in the following turn.
+1. **Untangle Multi-Concern Commits (Only When Truly Tangled):**
+   - Only output a brief **Change Map** at the top of Section 1 when a commit bundles **multiple unrelated features or concerns**. Never print a `Change Map` when client, server, and test files all implement a single cohesive fix or feature.
+   - When a commit is genuinely tangled, deep-dive into **only the single most critical Core Logic slice** (200–400 LOC budget) across Sections 1–5, and ask at the end whether the user wants to move to the next slice in the following turn.
 2. **Auto Scale-Down (Trivial / Single-Decision Diffs):**
    - If a diff contains only 1 meaningful engineering decision (e.g., tightening a guard clause, adding a config flag, fixing an off-by-one boundary), write **only `Step 1`** in Section 3 and keep the explanation tight and focused on that single decision.
    - Never fabricate `Step 2` or `Step 3` from obvious boilerplate just to fill the template.
-3. **Context-Adaptive Big Picture (Non-Bug-Fix Tasks):**
-   - For greenfield features, architectural refactors, or reading existing code, switch Section 1 from `Symptom -> Root cause -> Fix -> Before/After` to `Goal -> Key design challenge (why a naive approach fails) -> Core approach -> Input/Output`.
-4. **Data & Constraint Layers (Declarative Code: SQL, Schema, Config, CSS/UI):**
-   - When explaining declarative code that lacks a sequential call stack (complex SQL queries, database migrations/indexes, DI/security middleware configs, CSS Grid/Flexbox layouts), shift Section 2 and Section 3 from function-call order to **Data Transformation Phases or Constraint Layers** (e.g., for SQL: *Step 1: Data sources & JOIN conditions -> Step 2: Filtering & grouping rules (WHERE/GROUP BY) -> Step 3: Output projections & window expressions (SELECT/WINDOW)*).
-5. **Defect Alert Before Teaching (Anti-Post-Hoc Rationalization):**
-   - Audit the diff for correctness before explaining. If the code contains a real logic bug, `race condition`, memory/resource leak, or security vulnerability, place a **`⚠️ Defect Alert`** block at the very top of Section 1 (pinpointing the buggy line, failure scenario, and fix) instead of rationalizing broken code as clever design.
-6. **Turn-2 Reply Protocol (Formative Feedback on Section 5):**
+3. **Defect Alert in Section 4 (Anti-Post-Hoc Rationalization):**
+   - Audit the diff for correctness before explaining. Never rationalize broken code as clever design—after walking through the code in Section 3, flag any real logic bug, `race condition`, leak, or vulnerability with **`⚠️ Defect Alert`** at the top of Section 4.
+4. **Turn-2 Reply Protocol (Formative Feedback on Section 5):**
    - When the user replies to Section 5 questions, respond in **at most 3–5 short sentences**:
      1. Confirm what the user reasoned correctly.
      2. If there is a misconception or missed boundary condition, point directly to the quoted line or condition from Section 3 to correct it concisely.
@@ -111,15 +106,14 @@ For each step (`#### Step 1: [Practical technical question?]`, plus `Step 2` / `
 
 ## Red Flags — STOP and Fix Before Sending
 
-- **Telegraphic compression / skipped causal links:** Jumping directly from cause `[A]` to solution `[D]` without spelling out intermediate state `[B]` and concrete failure `[C]`, forcing the reader to guess the missing steps.
-- **Unilateral explanation without contrast:** Describing only what the code does (`[P]`) without explaining why the obvious naive approach (`[Q]`) fails.
-- **Abstract prose instead of a Concrete Dry-Run:** Describing Section 3 logic only in abstract terms instead of plugging a concrete sample value into the variables and tracing it through the `if/else` branches.
+- **Premature complexity at the top of Section 1:** Putting a `⚠️ Defect Alert` before Section 3, or printing a `Change Map` for a single-purpose commit where client/server/test files all solve the same problem.
+- **Wall-of-prose Dry-Run or 3rd `If omitted` bullet in Section 3:** Writing a dense paragraph for the dry-run instead of 2–3 arrow (`->`) bullets with short, memorable sample names, or keeping a separate `If omitted` bullet that repeats the `Contrastive Why`.
+- **Missing concrete example in complex code comments:** Leaving a long string interpolation or regex in Section 3 without an evaluated example string in its inline comment.
+- **Telegraphic compression / skipped causal links:** Jumping directly from cause `[A]` to solution `[D]` without spelling out intermediate state `[B]` and concrete failure `[C]`.
 - Any dual-language header or bullet label in the format `<Local Label> (<English Label>):`.
 - Over-translating standard developer terms (`git diff`, `commit`, `race condition`, `deadlock`, `in-place`, `offset`, `stream`, `buffer`, `fallback`, `edge case`, `breakpoint`, `unit test`, `mock`, `payload`, `thread`, `async/await`).
 - Explaining non-obvious variables, magic numbers, array/regex indices, bitmasks, or boundary conditions in prose above the code AND again inside the code.
 - Listing more than 3 function names in Section 2 (Main Execution Flow).
 - Leaving irrelevant boilerplate, unchanged fields, or verbose parameters in `Before -> After` / `Input -> Output` examples instead of replacing unchanged parts with `...`.
-- Cramming multiple unrelated commit concerns into one 3-step story instead of adding a **Change Map** and focusing on 1 core slice.
 - Padding a trivial 1-decision diff with artificial `Step 2` and `Step 3` boilerplate.
-- Rationalizing buggy or vulnerable code instead of flagging it upfront with **`⚠️ Defect Alert`**.
 - Asking a Section 5 question about a function or line not shown in Section 3, or replying to the user's Turn-2 answer with another long lecture (>5 sentences).
