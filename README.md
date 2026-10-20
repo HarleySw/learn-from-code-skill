@@ -1,7 +1,7 @@
 # learn-from-code
 
 [![skills.sh](https://skills.sh/b/HarleySw/learn-from-code-skill)](https://skills.sh/HarleySw/learn-from-code-skill)
-[![Version](https://img.shields.io/badge/version-1.6.0-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
+[![Version](https://img.shields.io/badge/version-1.7.0-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Agent Skills](https://img.shields.io/badge/standard-agentskills.io-purple.svg)](https://agentskills.io/)
 
@@ -34,10 +34,10 @@ Passive explanations fail software teams:
 ## Key Principles & Cognitive Rules
 
 * **Zero Split-Attention:** Explanations of boundary conditions, magic numbers, and regex groups live **strictly inside short inline comments** in the code snippet—never duplicated in prose above the code.
-* **Bridge Domain & Program Models:** Always anchors code mechanics to the **real-world business event** that triggered the execution and the **business invariant** being protected.
+* **Bridge Domain & Program Models (Zero Domain Hallucination):** Anchors code mechanics to the **real-world business event** (or **Runtime/System trigger** for pure infrastructure diffs) and verifies internal domain codes against repo docs/tests before explaining—explicitly labeling undocumented codes as *inferred hypotheses* rather than guessing.
 * **Causal Domino Chain (`A -> B -> C`):** Explains *why* naive alternatives fail (`[Trigger A] -> [Intermediate state B] -> [Concrete failure C]`), not just what line changed.
 * **Interleaved Timelines for Async/Concurrency:** Renders async lifecycles, abort controllers, locks, and race conditions as chronologically interleaved timelines (`t1 -> t2 -> t3`).
-* **Unseen Caller / Consumer Audit:** Scans immediate callers and data consumers **outside the `git diff`** to ensure changed ID formats, return types, or enum states don't break unmodified files.
+* **Unseen Caller, Persisted-Data, Unhappy-Path & Scale Audit:** Scans immediate callers **outside the `git diff`**, checks backward compatibility with existing persisted data (`localStorage`/DB/cache/URL) whenever key formats or schemas change, audits `catch`/`fallback` blocks for silent failures, and flags `O(N^2)` / `N+1` scale bottlenecks.
 * **Delocalized Co-Change Warnings:** Explicitly calls out split or mirrored logic across files (client vs. server, producer vs. consumer) with clear synchronization rules to prevent state drift.
 * **State Invariant Breakpoints:** Pairs suggested breakpoint lines with the exact runtime state invariant expression to inspect, isolating defects before state infection spreads.
 * **Working Memory Cap:** Execution flows are summarized in 3–4 plain-language steps naming **at most 2–3 primary functions**.
@@ -132,7 +132,7 @@ Every Mode A explanation follows a standardized, predictable recipe:
 learn-from-code-skill/
 ├── skills/
 │   └── learn-from-code/
-│       └── SKILL.md       # Core specification & prompt contract (v1.6.0)
+│       └── SKILL.md       # Core specification & prompt contract (v1.7.0)
 ├── LICENSE                # MIT License
 └── README.md              # Documentation & quickstart guide
 ```
