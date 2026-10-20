@@ -45,7 +45,7 @@ npx skills add -g HarleySw/learn-from-code-skill
 Update to the latest version:
 
 ```bash
-npx skills update
+npx skills update -g learn-from-code
 ```
 
 ## Usage
