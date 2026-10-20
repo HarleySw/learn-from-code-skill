@@ -1,7 +1,7 @@
 # learn-from-code
 
 [![skills.sh](https://skills.sh/b/HarleySw/learn-from-code-skill)](https://skills.sh/HarleySw/learn-from-code-skill)
-[![Version](https://img.shields.io/badge/version-1.7.0-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
+[![Version](https://img.shields.io/badge/version-1.8.0-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Agent Skills](https://img.shields.io/badge/standard-agentskills.io-purple.svg)](https://agentskills.io/)
 
@@ -41,7 +41,7 @@ Passive explanations fail software teams:
 * **Delocalized Co-Change Warnings:** Explicitly calls out split or mirrored logic across files (client vs. server, producer vs. consumer) with clear synchronization rules to prevent state drift.
 * **State Invariant Breakpoints:** Pairs suggested breakpoint lines with the exact runtime state invariant expression to inspect, isolating defects before state infection spreads.
 * **Working Memory Cap:** Execution flows are summarized in 3–4 plain-language steps naming **at most 2–3 primary functions**.
-* **Automatic Localization:** Automatically responds in your conversation language (English, Vietnamese, Japanese, etc.) with natural senior-developer register (preserving universal terms like `race condition`, `deadlock`, `in-place`, `fallback`, `breakpoint`).
+* **Automatic Localization & Mechanical Plain-Language Syntax:** Automatically responds in your conversation language (English, Vietnamese, Japanese, etc.) while enforcing `Concrete Actor + Strong Action Verb` (zero zombie nouns), `One Word = One Meaning` (zero synonym rotation), `Old-Before-New` sentence chaining, and a 25-word sentence cap across all models.
 
 ---
 
@@ -132,7 +132,7 @@ Every Mode A explanation follows a standardized, predictable recipe:
 learn-from-code-skill/
 ├── skills/
 │   └── learn-from-code/
-│       └── SKILL.md       # Core specification & prompt contract (v1.7.0)
+│       └── SKILL.md       # Core specification & prompt contract (v1.8.0)
 ├── LICENSE                # MIT License
 └── README.md              # Documentation & quickstart guide
 ```

@@ -4,7 +4,7 @@ description: Use when the user asks to explain recent code changes, review a git
 license: MIT
 metadata:
   author: HarleySw
-  version: "1.7.0"
+  version: "1.8.0"
 ---
 
 # Learn From Code
@@ -21,12 +21,16 @@ Build codebase mental models and debugging intuition from code changes by limiti
 1. **Match the User's Language Automatically:**
    - Automatically respond and localize all section headers, transition labels, bullet labels, and inline code comments into the exact language the user is using.
 2. **Zero Dual-Language Header Clutter:**
-   - Use only natural monolingual labels in the active response language. Never pair two languages side-by-side in the format `<Local Label> (<English Label>):`.
+   - Use only natural monolingual labels in the active response language. Never pair two languages side-by-side or append parenthetical English labels to localized headers, step titles, or risk bullet titles (e.g., never write `<Local Label> (<English Label>):` such as `Khối catch nuốt lỗi (Silent Failure):`).
 3. **Natural Developer Code-Switching (Never Over-Translate Core Terms):**
    - Preserve universal technical terms that native developers use daily (`git diff`, `commit`, `race condition`, `deadlock`, `in-place`, `offset`, `stream`, `buffer`, `fallback`, `edge case`, `breakpoint`, `unit test`, `mock`, `payload`, `thread`, `async/await`) instead of forcing stiff literal translations.
    - For unfamiliar domain-specific or low-level protocol identifiers, keep the original identifier and attach a brief 2–4 word plain-language explanation on first mention.
-4. **Idiomatic Senior-Engineer Tone:**
-   - Write in a direct, active voice that reads naturally like a native Senior Engineer speaking to a teammate, avoiding word-by-word translations or academic passive constructions.
+4. **Mechanical Plain-Language Syntax (`Concrete Actor + Strong Action Verb`, `One Word = One Meaning`, `Old-Before-New`):**
+   - **Concrete Actor + Strong Action Verb (Zero Zombie Nouns):** Make every sentence subject a concrete actor (`User`, `Function X`, `Variable Y`, `Loop`, `Database`) paired directly with a strong action verb (`overwrites`, `drops`, `blocks`, `prefixes`, `skips`). Never turn verbs into abstract nominalizations ("zombie nouns") or open sentences with wrapper phrases (*"The implementation of..."*, *"The execution of..."*, *"Việc thực hiện..."*, *"Sự cô lập của..."*, *"Cơ chế xử lý..."*):
+     - ❌ *Bad (Abstract / Zombie Nouns):* `"The implementation of prefixing performs the isolation of identifiers to prevent the occurrence of data collision."`
+     - ✅ *Good (Actor + Action Verb):* `"Prefixing pres.id gives each prescription a unique key so prescription B never overwrites prescription A."`
+   - **One Word, One Meaning (Zero Synonym Rotation):** Once you name a domain entity or technical concept in the first sentence, use that exact term throughout the entire response—never rotate synonyms for stylistic variety.
+   - **One Idea Per Sentence (Max 25 Words) & `Old-Before-New` Chaining:** Limit each prose sentence to 1 main action (20–25 words max); use arrows (`->`) or split into two short sentences instead of nesting 3–4 clauses. When chaining two sentences, open sentence 2 with the variable or result produced at the end of sentence 1 (`[Function A builds string X]. [Using string X, Function B checks...]`).
 
 ## Core Readability & Cognitive Load Rules
 
@@ -47,9 +51,9 @@ Build codebase mental models and debugging intuition from code changes by limiti
 4. **Bridge Domain Model & Program Model (Real-World Triggers, Grounded Business Rules & Persisted-Data / Runtime Risks):**
    - Code mechanics (`Program Model`) are only half of comprehension; always anchor them to the project's real-world workflow and business invariants (`Domain / Situation Model`) without hallucinating:
      - **Ground Domain Terms in Repo First (Zero Domain Hallucination):** Before explaining internal domain codes, status numbers, or abbreviated identifiers (e.g., `FormA1`, `statusCode = 3`, `tier = "P2"`), cross-check repo documentation (`CLAUDE.md`, `GEMINI.md`, `README.md`), comments, enums/models, or unit test descriptions. If a domain meaning has no evidence in the repo and is only inferred from a variable name, explicitly label it as an **inferred hypothesis** rather than stating it as fact.
-     - **In Section 2 (Real-World User / Business Triggers, or Runtime / System Triggers for Pure Infrastructure):** Never list functions as dry data processors. Start each step with the **real-world user action or business event** that triggers that function and the user goal it serves—or, if the commit is pure infrastructure, build/config, or a low-level utility with no direct end-user action, open with the **Runtime / Caller System Trigger** instead of forcing an artificial user story.
+     - **In Section 2 (Real-World User / Business Triggers, or Runtime / System Triggers for Pure Infrastructure):** Never list functions as dry data processors. Start each step with the **real-world user action or business event** that triggers that function and the user goal it serves—or, if the commit is pure infrastructure, build/config, or a low-level utility with no direct end-user action, open with the **runtime or caller system event** that invokes it instead of forcing an artificial user story.
      - **In Section 3 (Business Rules & Divergent Domain Policies):** In the opening transition of each Step, state the **Business Rule / Domain Invariant** being enforced. When two modules in the same commit handle the same domain entity differently (e.g., one module deduplicates items by name while another keeps every item per parent container), explicitly explain the **business reason** behind that difference.
-     - **In Section 4 (Domain Invariant, Persisted-Data, Unhappy-Path & Scale Risks):** State the **concrete real-world business/user impact** if an invariant fails, and always check: (a) **Persisted-Data Backward Compatibility** whenever an ID/Key formula or schema stored in `localStorage`/DB/cache/session/URL changes, (b) **Unhappy-Path & Silent Failures** in `catch` blocks, `?.`, or default `fallback` branches, and (c) **Production Scale Bottlenecks** (`O(N^2)` nested loops like `.find()` inside `for`, `N+1` queries, or memory growth) that look harmless on 2 dry-run items.
+     - **In Section 4 (Domain Invariant, Persisted-Data, Unhappy-Path & Scale Risks):** State the **concrete real-world business/user impact** if an invariant fails, and always check: (a) **persisted-data backward compatibility** whenever an ID/Key formula or schema stored in `localStorage`/DB/cache/session/URL changes, (b) **unhappy-path & silent failures** in `catch` blocks, `?.`, or default `fallback` branches, and (c) **production scale bottlenecks** (`O(N^2)` nested loops like `.find()` inside `for`, `N+1` queries, or memory growth) that look harmless on 2 dry-run items.
 5. **Working Memory Cap (Max 3 Function Names in Flow):**
    - In the execution flow section, summarize the pipeline in **3–4 plain-language action steps** naming **at most 2–3 main functions**. Do not dump 6–8 internal helper names or low-level spec operators at once.
 6. **Noise-Free `Before -> After` / `Input -> Output` Data Examples:**
@@ -77,7 +81,7 @@ Explain the causal chain at the **Macro / System behavior level** (leaving Micro
   - **Concrete example (`Input -> Output`):** A 2–4 line noise-free snippet illustrating what enters and exits the module.
 
 ### 2. Main Execution Flow (3–4 steps anchored to Real-World User / Business or Runtime System Triggers)
-- A numbered list of 3–4 plain-language steps where each step opens with the **real-world user action or business scenario** that triggers it (or, for pure infrastructure/plumbing/low-level utilities without direct user interaction, the **Runtime / Caller System Trigger**), tracing how data moves to the core change and naming **at most 2–3 primary functions** (or, for declarative code like SQL, Schema, Config, and CSS/UI without a sequential call stack, **3–4 Data Transformation Phases or Constraint Layers**).
+- A numbered list of 3–4 plain-language steps where each step opens with the **real-world user action or business scenario** that triggers it (or, for pure infrastructure/plumbing/low-level utilities without direct user interaction, the **runtime or caller system event** that invokes it), tracing how data moves to the core change and naming **at most 2–3 primary functions** (or, for declarative code like SQL, Schema, Config, and CSS/UI without a sequential call stack, **3–4 Data Transformation Phases or Constraint Layers**).
 
 ### 3. Core Code Steps (1 to 3 steps, scaled to diff complexity — Micro / Code Level)
 For each step (`#### Step 1: [Practical technical question?]`, plus `Step 2` / `Step 3` only when distinct engineering decisions exist):
@@ -90,7 +94,7 @@ For each step (`#### Step 1: [Practical technical question?]`, plus `Step 2` / `
 ### 4. Verification & Hidden Risks
 - **`⚠️ Defect Alert` *(Only if a bug/flaw exists in the diff or its unseen callers)*:** Before writing Section 4, audit immediate callers/consumers **outside the `git diff`**, error-handling branches (`catch`, `?.`, default `fallback`—checking whether they degrade gracefully or silently swallow errors and corrupt domain state without logging), and production-scale complexity (`O(N^2)` nested `.find()`/`.includes()` loops or `N+1` queries that look harmless in a 2-item dry-run). If any logic bug, silent failure, `race condition`, leak, scale trap, or contract break exists, highlight it right here at the top of Section 4 (pinpointing the exact line, failure scenario with `->` steps, real-world domain impact, and fix)—and never praise broken/silent-failure code as "defensive" in Section 3.
 - **Verified:** 1 bullet on what is proven to work + a 1-line **Quick verification** specifying an exact `breakpoint` (`file:line`) accompanied by the concrete **State Invariant / expression** to inspect to verify state is not infected/corrupted (e.g., `breakpoint at file.ts:131: verify Object.keys(doses) all carry ${prescriptionId}_ prefix`), plus any relevant test command or visual check.
-- **Assumptions & Risks:** 1–2 bullets on remaining unverified `edge cases`, unseen caller assumptions, **persisted-data backward compatibility** (whenever an ID/Key format, state shape, or schema in `localStorage`/DB/cache/session/URL changes, whether existing saved user data will fail or need migration), or **scale/unhappy-path risks**, explicitly stating both the **technical trigger** and the **real-world business/user consequence** if violated. If twin logic, shared key formats, or producer-consumer contracts span multiple files (*Delocalized Plan / Co-Change Coupling*, e.g., Client API vs. Server Service), explicitly mandate the cross-file sync rule: *"If modifying logic [X] in [File A] later, [File B] must be updated synchronously to prevent state drift."*
+- **Assumptions & Risks:** 1–2 bullets on remaining unverified `edge cases`, unseen caller assumptions, **persisted-data backward compatibility** (whenever an ID/Key format, state shape, or schema in `localStorage`/DB/cache/session/URL changes, whether existing saved user data will fail or need migration), or **scale/unhappy-path risks**, explicitly stating both the **technical trigger** and the **real-world business/user consequence** if violated. If twin logic, shared key formats, or producer-consumer contracts span multiple files (e.g., Client API vs. Server Service), explicitly mandate the cross-file sync rule: *"If modifying logic [X] in [File A] later, [File B] must be updated synchronously to prevent state drift."*
 
 ### 5. Debugging Check (1–2 short questions)
 - Ask **1–2 single-focus debugging or boundary questions** (answerable in 2–3 sentences).
@@ -125,6 +129,7 @@ For each step (`#### Step 1: [Practical technical question?]`, plus `Step 2` / `
 - **Missing concrete example in complex code comments:** Leaving a long string interpolation or regex in Section 3 without an evaluated example string in its inline comment.
 - **Telegraphic compression / skipped causal links:** Jumping directly from cause `[A]` to solution `[D]` without spelling out intermediate state `[B]` and concrete failure `[C]`.
 - Any dual-language header or bullet label in the format `<Local Label> (<English Label>):`.
+- **Zombie nouns, synonym rotation, or >25-word multi-clause prose sentences:** Opening sentences with abstract wrapper nouns (*"The implementation of..."*, *"Việc thực hiện..."*) instead of `Concrete Actor + Action Verb`, rotating synonyms for the same domain entity, or writing 40-word nested sentences instead of splitting or using `->`.
 - Over-translating standard developer terms (`git diff`, `commit`, `race condition`, `deadlock`, `in-place`, `offset`, `stream`, `buffer`, `fallback`, `edge case`, `breakpoint`, `unit test`, `mock`, `payload`, `thread`, `async/await`).
 - Explaining non-obvious variables, magic numbers, array/regex indices, bitmasks, or boundary conditions in prose above the code AND again inside the code.
 - Listing more than 3 function names in Section 2 (Main Execution Flow).
