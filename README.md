@@ -23,6 +23,7 @@ npx skills add -g HarleySw/learn-from-code-skill
 <summary>Manual installation</summary>
 
 Copy [`skills/learn-from-code/SKILL.md`](skills/learn-from-code/SKILL.md) into your agent's skill/rules folder:
+
 - **Claude Code:** `.claude/skills/learn-from-code/SKILL.md`
 - **Cursor:** `.cursor/rules/learn-from-code.mdc`
 - **Google Antigravity / OpenCode / Codex:** `.agents/skills/learn-from-code/SKILL.md`
@@ -48,6 +49,7 @@ Use learn-from-code in Mode B to implement the retry backoff logic.
 When reviewing code (Mode A), the agent follows a structured **2-turn workflow**:
 
 **Turn 1 — Understand the Change:**
+
 1. **Big Picture:** Plain-language symptom, everyday analogy, root cause, and a `Before -> After` snippet (`❌` vs `✅`).
 2. **Main Execution Flow:** 3–4 steps anchored to real-world user or system triggers (max 1 primary function per step).
 3. **Core Code Steps:** Focused snippets with inline comments, concrete examples, *Contrastive Why* sub-bullets, and a **4-column Markdown State Trace Table** (plus **ASCII Rulers** for slice/offset math).
@@ -55,6 +57,7 @@ When reviewing code (Mode A), the agent follows a structured **2-turn workflow**
 5. **Debugging Check:** 1–3 targeted boundary questions to test your mental model before moving on.
 
 **Turn 2 — Consolidate & Transfer *(after you reply)*:**
+
 6. **Answer Review:** Step-by-step feedback on your answers pinpointed to exact `filename:line` locations.
 7. **Transferable Patterns:** Reusable engineering patterns extracted from the diff (when to use vs. when not to use).
 8. **Blast Radius & Next Actions:** Cross-file co-change rules and missing edge-case tests worth adding.
