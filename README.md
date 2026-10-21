@@ -55,8 +55,8 @@ When reviewing code (Mode A), the agent follows a structured **2-turn workflow**
 1. **Big Picture:** Plain-language symptom, everyday analogy, root cause, and a `Before -> After` snippet (`❌` vs `✅`).
 2. **Main Execution Flow:** Chronological steps anchored to real-world user or system triggers (max 1 primary function per step).
 3. **Core Code Steps:** Focused snippets with inline comments, concrete examples, *Contrastive Why* sub-bullets, and **conversational vertical case walkthroughs** (plus **ASCII Rulers** for slice/offset math).
-4. **Verification & Hidden Risks:** Audits unseen callers, backward compatibility (`localStorage`/DB), and edge cases, flagging real bugs with `⚠️ Defect Alert`.
-5. **Debugging Check:** Targeted boundary questions dynamically scaled to the change to test your mental model before moving on.
+4. **Verification & Hidden Risks:** Audits unseen callers, backward compatibility (`localStorage`/DB), and edge cases, flagging real bugs with `⚠️ Defect Alert` and a compact `❌ Current -> ✅ Fix` code slice.
+5. **Debugging Check:** Self-contained boundary scenarios—each with its own focused code slice so you never have to scroll back up—dynamically scaled to test your mental model before moving on.
 
 **Turn 2 — Consolidate & Transfer *(after you reply)*:**
 
