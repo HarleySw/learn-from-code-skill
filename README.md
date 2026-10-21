@@ -5,6 +5,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Agent Skills](https://img.shields.io/badge/standard-agentskills.io-purple.svg)](https://agentskills.io/)
 
+**English** | [Tiếng Việt](README.vi.md)
+
 An [Agent Skill](https://agentskills.io/) that helps you actually understand AI-generated code and `git diff`s—turning complex changes into clear mental models, visual state traces, and debugging intuition instead of walls of text.
 
 ## Quick Start
