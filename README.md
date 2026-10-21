@@ -18,7 +18,7 @@ Passive explanations fail software teams:
 * ⚠️ **Working Memory Overflow:** Dumping 7–8 internal helper functions and raw AST mechanics at once.
 * ⚠️ **The "Looks Good To Me" Trap:** Smooth explanations that feel clear while reading, but leave you with zero debugging intuition when production fails 2 days later.
 
-`learn-from-code` fixes this by enforcing a strict **90–120 second reading budget (350–500 prose words)**, inline concrete evaluations, causal data-flow storytelling, and active retrieval checks.
+`learn-from-code` fixes this by limiting **topic scope** (at most 3 core steps, ignoring peripheral boilerplate) while explaining every mechanism and vertical dry-run step with **complete, unbroken causal reasoning**, Subgoal-Labeled inline comments, and active retrieval checks.
 
 ---
 
@@ -33,10 +33,12 @@ Passive explanations fail software teams:
 
 ## Key Principles & Cognitive Rules
 
-* **Zero Split-Attention:** Explanations of boundary conditions, magic numbers, and regex groups live **strictly inside short inline comments** in the code snippet—never duplicated in prose above the code.
+* **Zero Split-Attention & Subgoal-Labeled Arithmetic (*Margulieux, Guzdial & Catrambone*):** Explanations of boundary conditions, magic numbers, regex groups, and **all index/offset/slice math (`Index + Length`, `Substring`, `slice`)** live strictly inside short inline **Subgoal Comments** illustrated with small concrete numbers—never left uncommented as "basic syntax" or duplicated in prose above the code.
+* **1-Line Syntax Anatomy Legend (*Mayer's Pre-Training Principle & Hermans' LTM Support*):** Whenever a `Before -> After` example or code snippet contains unfamiliar format tokens, protocol commands, graphics/bytecode operators, or regex syntax, a 1-line Anatomy Legend comment at the top of the snippet decodes each token in plain words first.
 * **Bridge Domain & Program Models (Zero Domain Hallucination):** Anchors code mechanics to the **real-world business event** (or **Runtime/System trigger** for pure infrastructure diffs) and verifies internal domain codes against repo docs/tests before explaining—explicitly labeling undocumented codes as *inferred hypotheses* rather than guessing.
-* **Causal Domino Chain (`A -> B -> C`):** Explains *why* naive alternatives fail (`Trigger A -> Intermediate state B -> Concrete failure C`), not just what line changed.
-* **Interleaved Timelines for Async/Concurrency:** Renders async lifecycles, abort controllers, locks, and race conditions as chronologically interleaved timelines (`t1 -> t2 -> t3`).
+* **Short `<25`-Word Sentences & Vertical Multi-Line Dry-Runs (*Mayer & Clark's Personalization Principle*):** Explains *why* naive alternatives fail using separate, complete `<25`-word sentences linked by `Old-Before-New` transitions (never run-on `->` chains), and breaks `Visual Dry-Run` scenarios vertically into indented sub-bullets (**Input**, **Step-by-step / Loop trace** matching numbered code comments, and **Result**).
+* **Interleaved Timelines for Async/Concurrency:** Renders async lifecycles, abort controllers, locks, and race conditions as vertical chronologically interleaved timelines (`t1`, `t2`, `t3`).
+* **Worked-Example Completeness (*Renkl, Atkinson & Derry*):** Every condition in a Section 3 code snippet must have its purpose explained and its downstream lines visible (never hidden behind `...`) before Section 5 tests how that rule applies to an edge case.
 * **Unseen Caller, Persisted-Data, Unhappy-Path & Scale Audit:** Scans immediate callers **outside the `git diff`**, checks backward compatibility with existing persisted data (`localStorage`/DB/cache/URL) whenever key formats or schemas change, audits `catch`/`fallback` blocks for silent failures, and flags `O(N^2)` / `N+1` scale bottlenecks.
 * **Delocalized Co-Change Warnings:** Explicitly calls out split or mirrored logic across files (client vs. server, producer vs. consumer) with clear synchronization rules to prevent state drift.
 * **State Invariant Breakpoints:** Pairs suggested breakpoint lines with the exact runtime state invariant expression to inspect, isolating defects before state infection spreads.
@@ -103,11 +105,11 @@ Use learn-from-code in Mode B to implement the payment retry backoff logic.
 
 Every Mode A explanation follows a standardized, predictable recipe:
 
-1. **Big Picture (100% Plain-Language Macro Story):** Symptom, everyday root-cause analogy with natural `->` cause-and-effect chain, plain-language fix summary (zero file/function/variable names), and a 3–6 line `Before -> After` snippet visually showing 2 items colliding or transforming.
+1. **Big Picture (100% Plain-Language Macro Story):** Symptom, everyday root-cause analogy with short, separate `<25`-word sentences linked by `Old-Before-New` transitions, plain-language fix summary (zero file/function/variable names), and a 3–6 line `Before -> After` snippet visually showing 2 items colliding or transforming (prefaced by a 1-line Syntax Anatomy Legend whenever unfamiliar format/protocol tokens appear).
 2. **Main Execution Flow:** 3–4 steps opening with the real-world user/business trigger, naming at most 2–3 primary functions.
-3. **Core Code Steps (`Step 1 -> Step 2 -> Step 3`):** Up to 3 chronological steps with inline code annotations, a 2-sentence *Contrastive Why* (why naive approach fails), and a *Visual Dry-Run* (`input -> output` or `t1 -> t2 -> t3` timeline).
+3. **Core Code Steps (`Step 1 -> Step 2 -> Step 3`):** Up to 3 chronological steps with Subgoal-Labeled inline comments (with concrete small numbers for all index/slice math), a 2–3 sentence *Contrastive Why* (why naive approach fails), and a vertical multi-line *Visual Dry-Run* (**Input**, **Step-by-step / Loop trace**, and **Result**).
 4. **Verification & Hidden Risks:** High-priority `⚠️ Defect Alert` (if bugs/unseen caller breakages exist), followed by verified facts with a `breakpoint` (`file:line` + exact **state invariant** to inspect), unverified domain risks, and cross-file **co-change coupling** rules.
-5. **Debugging Check:** 1–2 single-focus boundary questions targeting the shown snippets to test mental retention (plus an optional 5-bullet repo gotcha note for cross-file coupling), pausing for your response.
+5. **Debugging Check:** 1–2 single-focus boundary questions applying rules *already taught and shown in Section 3* to a new edge-case input (plus an optional 5-bullet repo gotcha note for cross-file coupling), pausing for your response.
 
 ---
 
