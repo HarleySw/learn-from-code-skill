@@ -4,7 +4,7 @@ description: Use when the user asks to explain recent code changes, review a git
 license: MIT
 metadata:
   author: HarleySw
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # Learn From Code

@@ -1,7 +1,7 @@
 # learn-from-code
 
 [![skills.sh](https://skills.sh/b/HarleySw/learn-from-code-skill)](https://skills.sh/HarleySw/learn-from-code-skill)
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
+[![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Agent Skills](https://img.shields.io/badge/standard-agentskills.io-purple.svg)](https://agentskills.io/)
 
