@@ -4,12 +4,12 @@ description: Use when the user asks to explain recent code changes, review a git
 license: MIT
 metadata:
   author: HarleySw
-  version: "2.1.0"
+  version: "2.1.1"
 ---
 
 # Learn From Code
 
-Build codebase mental models and debugging intuition from code changes by prioritizing **completeness of core mechanics over arbitrary length caps**: filter out peripheral boilerplate, but explain every primary mechanism, guard condition, and dry-run step with **complete, unbroken causal reasoning**—never telegraphic compression or artificial truncation.
+Build codebase mental models and debugging intuition from code changes by prioritizing **completeness of core mechanics over arbitrary length caps** and **3-second visual comprehension**: filter out peripheral boilerplate, explain every primary mechanism and guard with **complete, unbroken causal reasoning**, and visualize spatial math and loop state transitions with **ASCII rulers, compact Markdown state tables, and semantic traffic-light icons (`✅`, `❌`, `⚠️`)**.
 
 ## Operating Modes
 
@@ -19,7 +19,7 @@ Build codebase mental models and debugging intuition from code changes by priori
 ## Language & Developer Register Rules
 
 1. **Match the User's Language Automatically:**
-   - Automatically respond and localize all section headers, transition labels, bullet labels, and inline code comments into the exact language the user is using.
+   - Automatically respond and localize all section headers, transition labels, bullet labels, table headers, and inline code comments into the exact language the user is using.
 2. **Zero Dual-Language Header Clutter:**
    - Use only natural monolingual labels in the active response language. Never pair two languages side-by-side or append parenthetical English labels to localized headers, step titles, or risk bullet titles (e.g., never write `<Local Label> (<English Label>):`).
 3. **Natural Developer Code-Switching (Never Over-Translate Core Terms):**
@@ -31,74 +31,93 @@ Build codebase mental models and debugging intuition from code changes by priori
      - ✅ *Good (Actor + Action Verb):* `"Prefixing groupId gives each group a unique key so Group B never overwrites Group A."`
    - **Ban "Translationese" and Literal Metaphor Calques (Use Everyday Spoken Developer Words):** When responding in any non-English language, write exactly as a native developer speaks aloud to a coworker at their desk. Never translate English technical metaphors (`drop`, `isolate`, `deduplicate`, `preserve`, `hydrate`, `swallow`, `plumbing`) word-by-word into unnatural literal verbs or stiff bureaucratic/academic nouns in the target language; always choose the natural everyday action phrase that native speakers use for that behavior (e.g., instead of literally translating *"drops items"*, *"isolates IDs"*, or *"preserves state"*, express it naturally as *"skips/misses items"*, *"gives each group its own separate key"*, or *"keeps the existing status"* in the target language).
    - **One Word, One Meaning (Zero Synonym Rotation):** Once you name a domain entity or technical concept in the first sentence, use that exact term throughout the entire response—never rotate synonyms for stylistic variety.
-   - **One Clear Idea Per Sentence (Avoid Nested Multi-Clause Run-On Sentences), `Old-Before-New` Chaining & Zero `->` Run-On Prose:** Express one clear main action per sentence so every sentence reads naturally in a single breath without nested sub-clauses. In prose explanations (`Root cause`, `Key design challenge`, `Contrastive Why`, and `Assumptions & Risks`), NEVER chain multiple clauses together on a single line with `->` arrows as a substitute for periods. Instead, write **separate, complete sentences ending with a period (`.`)** and link them smoothly with `Old-Before-New` transitions—opening sentence 2 with the concept, variable, or result produced at the end of sentence 1 (*"First, the exporter assigns each word a fixed X coordinate. Because bold glyphs are wider than that estimate, the first word overflows into the space at X=55.2. As a result, the space disappears and the two words touch."*). Reserve `->` strictly for short state transitions at the end of a vertical dry-run line (e.g., `-> passes the first if guard`, `-> returns true`).
+   - **One Clear Idea Per Sentence (Avoid Nested Multi-Clause Run-On Sentences), `Old-Before-New` Chaining & Zero `->` Run-On Prose:** Express one clear main action per sentence so every sentence reads naturally in a single breath without nested sub-clauses. In prose explanations (`Root cause`, `Key design challenge`, `Contrastive Why`, and `Assumptions & Risks`), NEVER chain multiple clauses together on a single line with `->` arrows as a substitute for periods. Instead, write **separate, complete sentences ending with a period (`.`)** and link them smoothly with `Old-Before-New` transitions—opening sentence 2 with the concept, variable, or result produced at the end of sentence 1 (*"First, the exporter assigns each word a fixed X coordinate. Because bold glyphs are wider than that estimate, the first word overflows into the space at X=55.2. As a result, the space disappears and the two words touch."*). Reserve `->` strictly for short state transitions inside a dry-run table cell or at the end of a vertical dry-run line (e.g., `-> skip if`, `-> returns true`).
 
-## Core Readability & Cognitive Load Rules
+## Core Readability, Visual Signaling & Cognitive Load Rules
 
 1. **No Premature Complexity or Code-Symbol Soup in Section 1 (Start With 100% Plain-Language Concepts):**
    - Section 1 (`Big Picture`) must **always** open directly with the 4 bullets `Symptom`, `Root cause`, `Fix`, and `Concrete example` (or `Goal`, `Key design challenge`, `Core approach`, and `Concrete example`) so the reader immediately grasps the problem and core idea.
-   - **Zero File, Function, or Variable Names in Section 1 Prose:** Never mention file paths, function names, or local variable/property identifiers (e.g., raw variable names, helper function names, or internal file paths) in the 3 prose bullets (`Symptom`, `Root cause`, `Fix`). Explain them entirely in plain domain concepts (e.g., *"group identifier"*, *"item sequence number"*, *"cache key"*) and save all file, function, and variable names for Sections 2 and 3.
+   - **Zero File, Function, or Variable Names in Section 1 Prose:** Never mention file paths, function names, or local variable/property identifiers in the 3 prose bullets (`Symptom`, `Root cause`, `Fix`). Explain them entirely in plain domain concepts (e.g., *"group identifier"*, *"item sequence number"*, *"cache key"*) and save all file, function, and variable names for Sections 2 and 3.
    - Never place a `⚠️ Defect Alert` at the top of Section 1 before the reader understands the domain and code steps; place `⚠️ Defect Alert` at the **top of Section 4 (`Verification & Hidden Risks`)** after Section 3.
    - Only output a `Change Map` when a commit genuinely bundles **multiple unrelated features/concerns** (e.g., changing payment UI + changing report export in one commit). If client, server, and test files in a commit all solve **one cohesive problem**, never print a `Change Map`.
-2. **No Wall-of-Prose — Complete Contrastive Why + Vertical Multi-Line Walkthrough (Mayer & Clark's Personalization Principle):**
+2. **Semantic Traffic-Light Icons Only (`✅`, `❌`, `⚠️` — Mayer's Signaling Principle):**
+   - Use **ONLY three functional status icons** as visual anchors across the entire response:
+     - `❌` for broken states, overwritten data, rejected boundary checks, or naive approaches that fail.
+     - `✅` for valid states, passed checks, preserved invariants, or the working fix.
+     - `⚠️` exclusively for `Defect Alert` blocks in Section 4.
+   - Never sprinkle decorative emojis (`🚀`, `💡`, `✨`, `📌`, `🔥`) on headers or prose bullets, which creates visual noise and dilutes semantic signaling.
+3. **No Wall-of-Prose — Complete Contrastive Why + Compact Markdown State Trace Table / Vertical Walkthrough (Python Tutor & Mayer's Personalization Principle):**
    - Below each code snippet in Section 3, keep **only 2 items** (never add a separate 3rd `If omitted` bullet that repeats the failure):
      1. **Contrastive Why (Why not the naive approach / what breaks without it):** Explain **the full reason behind every important guard, condition, or branch present in the quoted snippet** (if the snippet contains multiple distinct guards, explain why each one is needed and what concrete bug occurs if omitted), written as clear, separate single-idea sentences ending with periods (`.`)—never chained into a long run-on line with `->`.
-     2. **Visual Dry-Run (Vertical Multi-Line Walkthrough With No Length Restriction):** Do not restrict the length of `Visual Dry-Run`, and NEVER cram Input, multiple checks or loop iterations (`i = 0, 1, 2`), and Output onto a single horizontal line or format it as a robotic variable-assignment dump (`varA = 1, varB = 2 -> cond1 && cond2 -> true`). For each scenario, break the walkthrough **vertically onto separate indented sub-bullets** that match the numbered comments (`// 1.`, `// 2.`, `// 3.`) or loop iterations in the code snippet, using natural human phrases (never cluttering sentences with parenthetical boolean dumps like `(sameLineY = true)` or `(noFontChange = true)`):
-        - **Input:** State the concrete sample items entering the snippet in plain words with simple numbers.
-        - **Step-by-step / Loop trace (1 vertical line per check or loop iteration):** Show what happens at each numbered step or each loop pass (`Iteration 1 (i = 0): ...`, `Iteration 2 (i = 1): ...`), explicitly displaying how a mutable intermediate variable or buffer looks after that exact step.
-        - **Result:** Show the final return value or output string.
-        - ❌ *Bad (Robotic variable log dump or horizontal 1-line chain):*
-          `- Case 1: prevBlock = "(Hello)" (Y=14.5, prevX=57.3), between = "\r\n", curBlock = "(world)" (Y=14.5, curX=86.1) -> IsNullOrWhiteSpace(between) == true && sameLineY && 86.1 > 57.3 -> returns true.`
-        - ✅ *Good (Vertical step-by-step walkthrough matching numbered code comments):*
-          - **Scenario 1 — Two words inside the same table cell (Merged):**
-            - **Input:** Previous word is `"(Hello)"` (`Y = 14.5, X = 57`), next word is `"(world)"` (`Y = 14.5, X = 86`).
-            - **Step 1–3 (Check gap `between`):** Slicing the text between pos 120 and pos 122 returns only a blank newline `"\r\n"` (no table-border commands) -> passes the first `if` guard.
-            - **Step 4–6 (Check line, font, and X order):** Both sit on line `Y = 14.5`, the second word has no font-change command (`Groups[1]` is empty), and `86 > 57` -> all checks pass.
-            - **Result:** Returns `true` so the two words merge into one phrase.
-        - *Async, concurrency, lock, or lifecycle cleanup logic (`async/await`, `race condition`, `useEffect` cleanup, `AbortController`, debounce):* Format as a **Vertical Interleaved Timeline** with one indented sub-bullet per timestamp (`- t1: ...`, `- t2: ...`, `- t3: ...`) showing overlapping events in plain words rather than cramming `t1 -> t2 -> t3` onto one horizontal line.
-3. **Subgoal-Labeled Inline Comments with Simple Numbers for All Index, Offset & Slice Math (Margulieux, Guzdial & Catrambone's Subgoal Labeling):**
-   - Put all explanations of non-obvious variables, magic numbers, array/regex indices, bitmasks, or boundary conditions directly into short inline comments inside the code snippet in the user's language. Never repeat prose summaries of variables above the code.
-   - **Comment All Index, Offset, Pointer, and Slice Arithmetic with Simple Numbers:** Never leave index arithmetic, string slicing (`Index + Length`, `Substring`, `slice`), coordinate math, bit shifts, or pointer offsets uncommented by assuming they are "obvious syntax"—pointer and index arithmetic is where readers expend the most working memory. Above every such line, write a short **Subgoal Comment** stating *what boundary or gap is being calculated* illustrated with simple concrete numbers, and never put raw, undecoded protocol gibberish inside explanatory comments:
+     2. **Visual Dry-Run (Markdown State Trace Table for Loops / Multi-Case Branches, or Vertical Multi-Line Walkthrough):** Do not restrict the length of `Visual Dry-Run`, and NEVER cram Input, multiple checks or loop iterations (`i = 0, 1, 2`), and Output onto a single horizontal text line or format it as a robotic variable-assignment dump (`varA = 1, varB = 2 -> cond1 && cond2 -> true`):
+        - **When tracing a loop (`for`, `while`, `.reduce`, `.find`) building an accumulator/result OR evaluating multiple conditions across cases:** Prefer a **compact 4-column Markdown State Trace Table** (with `✅` / `❌` icons) over text bullets so the reader's eyes can scan down a single column to see variables change step by step:
+          | Step / Case | Input / Current Token | Check Evaluated (`✅` / `❌`) | Resulting State / Output |
+          | :--- | :--- | :--- | :--- |
+          | **Init** | *(Before loop)* | Grab shared header `"/F1 10 Tf"` | `sb = ""` |
+          | **Iter 1 (`i = 0`)** | `"(Hello)"` | ❌ Not a space `"( )"` -> skip `if` | `(Hello)` |
+          | **Iter 2 (`i = 1`)** | `"( )"` *(space)* | ✅ Is a space **and** `1 + 1 < 3` -> append `"-40"` | `(Hello)( )-40` |
+          | **Iter 3 (`i = 2`)** | `"(World)"` *(last)* | ❌ Not a space `"( )"` -> skip `if` | **`(Hello)( )-40(World)`** ✅ |
+        - **When tracing a linear sequential snippet (without loop accumulation):** Break each scenario **vertically onto separate indented sub-bullets** (**Input**, **Step 1..N** matching the numbered comments in the code snippet, and **Result** with `✅` / `❌`) using natural human phrases without parenthetical boolean dumps (`(sameLineY = true)`).
+        - **When tracing async, concurrency, lock, or lifecycle cleanup logic (`async/await`, `race condition`, `useEffect` cleanup, `AbortController`, debounce):** Use either a compact **Timeline State Table** (`Time` | `Event / Actor` | `Guard Check` | `State`) or a **Vertical Interleaved Timeline** with one sub-bullet per timestamp (`- t1: ...`, `- t2: ...`, `- t3: ...`).
+4. **Subgoal-Labeled Inline Comments & 2–4 Line ASCII Ruler Diagrams for Spatial / Index / Slice Math (Margulieux's Subgoal Labeling & CHI 2024 ASCII Diagramming Principle):**
+   - Put all explanations of non-obvious variables, magic numbers, array/regex indices, bitmasks, or boundary conditions directly into short inline comments (`< 76` chars per line) inside the code snippet in the user's language. Never repeat prose summaries of variables above the code.
+   - **2–4 Line ASCII Rulers / Spatial Diagrams for Index, Slice, Coordinate, or Memory Layout Math:** Whenever a step involves string slicing (`Index + Length`, `Substring`, `slice`), byte offsets/padding (`origLength`), coordinate geometry (`X, Y`), or pointer ranges, include a compact **2–4 line ASCII Ruler Diagram** (`< 76` chars per line) inside the comment or explanation alongside **Subgoal Comments with simple concrete numbers** so the reader can *see* the boundaries visually instead of doing mental arithmetic (and never put raw, undecoded protocol gibberish inside comments):
      - ❌ *Bad (Uncommented index math + raw gibberish in comment):*
        ```csharp
        int previousEnd = previousBlock.Index + previousBlock.Length;
        // Get substring between blocks (e.g. "0.5 w 10 20 50 15 re S\r\n")
        string between = text.Substring(previousEnd, currentBlock.Index - previousEnd);
        ```
-     - ✅ *Good (Subgoal label + simple numbers + plain-language meaning):*
+     - ✅ *Good (ASCII Ruler Diagram + Subgoal labels with simple numbers, all `< 76` chars):*
        ```csharp
-       // 1. Find the character position right after the previous word ends (e.g., starts at pos 100 + length 20 = ends at pos 120)
+       // Stream: ... [ Prev: "(Hello)" ] [ Gap (between) ] [ Cur: "(World)" ]
+       //             ^Index (100)        ^prevEnd (130)    ^cur.Index (132)
+       //                                 |<--- Slice --->|
+       // 1. Find where previous word ends (start 100 + len 30 = pos 130)
        int previousEnd = previousBlock.Index + previousBlock.Length;
-       // 2. Slice out whatever sits between the previous word (pos 120) and the next word (e.g., pos 125)
+       // 2. Slice the gap between previous word (130) and next word (132)
        string between = text.Substring(previousEnd, currentBlock.Index - previousEnd);
-       // 3. If that gap contains table-border drawing commands instead of blank whitespace, the two words belong to different cells -> do not merge!
+       // 3. If gap has border-drawing commands (not blank), do not merge!
        if (!string.IsNullOrWhiteSpace(between)) return false;
        ```
    - Whenever a code line contains a long string interpolation, complex regex, or multi-part expression, the inline comment right above that line **must include a concrete evaluated example string/value** so the reader immediately sees the result without mentally parsing the expression.
-4. **Bridge Domain Model & Program Model (Real-World Triggers, Grounded Business Rules & Persisted-Data / Runtime Risks):**
+5. **Bridge Domain Model & Program Model (Real-World Triggers, Grounded Business Rules & Persisted-Data / Runtime Risks):**
    - Code mechanics (`Program Model`) are only half of comprehension; always anchor them to the project's real-world workflow and business invariants (`Domain / Situation Model`) without hallucinating:
      - **Ground Domain Terms in Repo First (Zero Domain Hallucination):** Before explaining internal domain codes, status numbers, or abbreviated identifiers (e.g., `FormA1`, `statusCode = 3`, `tier = "P2"`), cross-check repo documentation (`CLAUDE.md`, `GEMINI.md`, `README.md`), comments, enums/models, or unit test descriptions. If a domain meaning has no evidence in the repo and is only inferred from a variable name, explicitly label it as an **inferred hypothesis** rather than stating it as fact.
      - **In Section 2 (Real-World User / Business Triggers, or Runtime / System Triggers for Pure Infrastructure):** Never list functions as dry data processors. Start each step with the **real-world user action or business event** that triggers that function and the user goal it serves—or, if the commit is pure infrastructure, build/config, or a low-level utility with no direct end-user action, open with the **runtime or caller system event** that invokes it instead of forcing an artificial user story.
      - **In Section 3 (Business Rules & Divergent Domain Policies):** In the opening transition of each Step, state the **Business Rule / Domain Invariant** being enforced. When two modules in the same commit handle the same domain entity differently (e.g., one module deduplicates items by name while another keeps every item per parent container), explicitly explain the **business reason** behind that difference.
      - **In Section 4 (Domain Invariant, Persisted-Data, Unhappy-Path & Scale Risks):** State the **concrete real-world business/user impact** if an invariant fails, and always check: (a) **persisted-data backward compatibility** whenever an ID/Key formula or schema stored in `localStorage`/DB/cache/session/URL changes, (b) **unhappy-path & silent failures** in `catch` blocks, `?.`, or default `fallback` branches, and (c) **production scale bottlenecks** (`O(N^2)` nested loops like `.find()` inside `for`, `N+1` queries, or memory growth) that look harmless on 2 dry-run items.
-5. **Primary Pipeline Trace in Section 2 (Filter Out Trivial Utilities, Keep Every Primary Pipeline Step):**
+6. **Primary Pipeline Trace in Section 2 (Filter Out Trivial Utilities, Keep Every Primary Pipeline Step):**
    - In the execution flow section, trace the actual path data takes through the **Primary Pipeline Functions** from entry trigger to final output, skipping only minor formatting/utility helpers so the reader grasps the complete end-to-end call chain without drowning in low-level utility names.
-6. **Noise-Free `Before -> After` Examples & 1-Line Syntax Anatomy Legend Before Unfamiliar Formats (Mayer's Pre-Training Principle & Hermans' LTM Syntax Support):**
+7. **Noise-Free `Before -> After` Examples & 1-Line Syntax Anatomy Legend Before Unfamiliar Formats (Mayer's Pre-Training Principle & Hermans' LTM Syntax Support):**
    - Replace repetitive property mappings or unchanged fields with `...` so the reader immediately spots the exact transformation.
-   - **1-Line Syntax Anatomy Legend Before Unfamiliar Formats:** Whenever a `Before -> After` snippet, code block, or code comment includes unfamiliar format tokens, protocol commands, graphics/bytecode operators, regex patterns, or DSL syntax, **ALWAYS place a 1-line Anatomy Legend comment at the very top of that snippet** decoding every token in plain words so the reader never has to guess unfamiliar syntax. Never put raw, undecoded protocol commands inside a comment:
+   - **1-Line Syntax Anatomy Legend Before Unfamiliar Formats:** Whenever a `Before -> After` snippet, code block, or code comment includes unfamiliar format tokens, protocol commands, graphics/bytecode operators, regex patterns, or DSL syntax, **ALWAYS place a concise Anatomy Legend comment (`< 76` chars per line) at the very top of that snippet** decoding every token in plain words so the reader never has to guess unfamiliar syntax. Never put raw, undecoded protocol commands inside a comment:
      - ❌ *Bad (Unexplained tokens):*
        `CMD ... 28.8 14.5 POS (ItemA) DRAW END`
-     - ✅ *Good (With 1-line Anatomy Legend at the top):*
-       `// Command anatomy: CMD..END (text block) | 28.8 (horizontal X) | 14.5 (vertical Y) | (ItemA) DRAW (render text)`
+     - ✅ *Good (With Anatomy Legend at the top, `< 76` chars per line):*
+       `// Anatomy: CMD..END (block) | 28.8 (X) | 14.5 (Y) | (ItemA) DRAW (text)`
        `CMD ... 28.8 14.5 POS (ItemA) DRAW END`
-7. **Chronological Story Pipeline (`Step 1 -> Step 2 -> ...`):**
+8. **Chronological Story Pipeline (`Step 1 -> Step 2 -> ...`):**
    - Order the steps chronologically along the actual data or execution flow and title each step with the practical technical question that step resolves.
-8. **Link Once Per Section:**
-   - Link a file or symbol only on its **first appearance** in a section. Do not spam clickable links on every line.
+
+## Cross-Surface CLI & GUI Rendering Discipline
+
+Because this skill runs across both 80-column Terminal CLI/TUI tools (e.g., OpenCode TUI, Claude Code CLI) and narrow GUI IDE chat sidebars (~400px wide in Cursor, VS Code), strictly enforce these 4 layout rules:
+
+1. **76-Character Width Cap Inside Code Blocks & ASCII Diagrams (Zero Horizontal Scrolling / Wrapping):**
+   - Both CLI terminals (80 columns) and IDE chat sidebars wrap or clip long monospace lines, which destroys the alignment of ASCII pointer arrows (`^` and `|<--->|`) and forces horizontal scrolling on code comments.
+   - Keep every line inside ASCII diagrams and inline explanatory code comments **under 76 characters**. If an inline comment needs more space, split it cleanly across two consecutive `//` comment lines above the code statement.
+2. **Compact, Unbreakable Tables (Short Cells & No Unescaped `|` Pipes):**
+   - When using a Markdown State Trace Table in `Visual Dry-Run`, keep it to **at most 4 columns** with **concise cells (under 30–35 characters per cell)** so the table never crushes into unreadable vertical strips in narrow CLI terminals or IDE sidebars.
+   - Never place raw unescaped pipe characters (`|` or logical OR `||`) inside a Markdown table cell, as CLI/IDE Markdown parsers will misinterpret them as column dividers and shatter the table layout (write `or` / `and` in words instead).
+3. **Always Include `filename:line` in Visible Link Text (and Link Once Per Section):**
+   - Many CLI terminals do not reveal hidden link URLs, while GUI IDEs support clickable links. Always put `filename:line` directly inside the visible label (e.g., `[OrderService.ts:142](path/to/OrderService.ts#L142)` or `` `OrderService.ts:142` ``) so GUI users can click it and CLI users can see the exact file and line number immediately. Link a file or symbol only on its **first appearance** in a section.
+4. **Pure Portable Markdown Only (Zero HTML Tags or Mermaid Blocks):**
+   - Never use raw HTML tags (`<br>`, `<details>`, `<summary>`, `<sub>`) or `mermaid` diagram blocks, which render as broken raw text in CLI/TUI tools. Rely strictly on standard Markdown and `< 76-char` monospace ASCII diagrams.
 
 ## Two-Turn Output Contract (Mode A Recipe)
 
-Localize the section titles and bullet labels below into the user's language (single-language labels only):
+Localize the section titles and bullet labels below into the user's language (single-language labels only, zero decorative emojis):
 
 ### 1. Big Picture (Context-Adaptive — 100% Plain-Language Macro Story)
 Explain the causal chain at the **Macro / System behavior level** using **100% plain-language domain concepts**—never mention file names, function names, or local variable/property names in the 3 prose bullets below (leave all code symbols for Sections 2 and 3). Always start directly with the 4 bullets below (only prepend a `Change Map` if the commit mixes unrelated features):
@@ -107,44 +126,43 @@ Explain the causal chain at the **Macro / System behavior level** using **100% p
     - *Example:* Instead of *"The search drops subsequent items and the cart loses overlapping entries"*, split into two concrete screen behaviors: (1) *In Search results:* the filter reads only Category A and skips all items in Category B; (2) *On the Checkout screen:* if two orders share item number `#1`, the screen displays only 1 item and the other disappears.
   - **Root cause:** Open with a 1-sentence everyday analogy, then explain the complete macro causal chain in **separate, single-idea sentences ending with a period (`.`)** linked smoothly with `Old-Before-New` transitions (**never chain multiple clauses together on one line with `->` arrows**).
   - **Fix:** State the high-level conceptual solution in everyday spoken words without listing file, function, or variable names.
-  - **Concrete example (`Before -> After`):** A visual snippet that **clearly shows the collision, overwrite, or transformation happening** in `Before` and how data is kept intact in `After` across concrete items with vivid sample names (never write a single abstract variable assignment). **If the example contains any domain-specific format tokens, protocol commands, regex syntax, or DSL operators, place a 1-line Syntax Anatomy Legend comment at the very top of the snippet decoding each token in plain words:**
+  - **Concrete example (`Before -> After`):** A visual snippet (`< 76` chars per comment line, using `❌` and `✅`) that **clearly shows the collision, overwrite, or transformation happening** in `Before` and how data is kept intact in `After` across concrete items with vivid sample names (never write a single abstract variable assignment). **If the example contains any domain-specific format tokens, protocol commands, regex syntax, or DSL operators, place a concise Syntax Anatomy Legend comment (`< 76` chars per line) at the very top of the snippet decoding each token in plain words:**
     ```ts
-    // Before: Both orders use item number "1", so Order B overwrites Order A
+    // Before: Both orders use item "1", so Order B overwrites Order A
     items["1"] = "Laptop (Order A)";
-    items["1"] = "Mouse (Order B)"; // <- Wipes out Laptop!
+    items["1"] = "Mouse (Order B)"; // ❌ Wipes out Laptop!
 
-    // After: Prefixing the order ID keeps both items in separate slots
+    // After: Prefixing order ID keeps both items in separate slots
     items["OrderA_1"] = "Laptop (Order A)";
-    items["OrderB_1"] = "Mouse (Order B)"; // <- Both kept!
+    items["OrderB_1"] = "Mouse (Order B)"; // ✅ Both kept!
     ```
 - **For New Features / Refactors / Existing Module Walkthroughs:**
   - **Goal:** State the capability or architectural outcome being built in plain words.
   - **Key design challenge:** Use a **Contrastive Explanation** written as **separate, single-idea sentences ending with a period (`.`)** and `Old-Before-New` transitions (**never chain long prose clauses with `->` arrows**) to explain why the obvious/naive approach falls short (with a 1-sentence everyday analogy if helpful).
   - **Core approach:** Summarize how the chosen design solves that challenge in plain words (zero file, function, or variable names).
-  - **Concrete example (`Input -> Output`):** A noise-free visual snippet with vivid sample values illustrating what enters and exits the system (starting with a **1-line Syntax Anatomy Legend comment** at the top if any unfamiliar format/protocol/DSL tokens appear).
+  - **Concrete example (`Input -> Output`):** A noise-free visual snippet (`< 76` chars per comment line) with vivid sample values illustrating what enters and exits the system (starting with a **Syntax Anatomy Legend comment** at the top if any unfamiliar format/protocol/DSL tokens appear).
 
 ### 2. Main Execution Flow (Anchored to Real-World User / Business or Runtime System Triggers)
-- A numbered list of plain-language steps tracing the actual path data takes from entry to output through the **Primary Pipeline Functions** (or through the **Data Transformation Phases / Constraint Layers** for declarative SQL, Schema, Config, and CSS/UI), where each step opens with the **real-world user action or business scenario** that triggers it (or, for pure infrastructure/plumbing/low-level utilities without direct user interaction, the **runtime or caller system event** that invokes it), skipping only minor utility helpers.
+- A numbered list of plain-language steps tracing the actual path data takes from entry to output through the **Primary Pipeline Functions** (with `filename:line` included in the visible link label on first mention) or through the **Data Transformation Phases / Constraint Layers** for declarative SQL, Schema, Config, and CSS/UI. Each step opens with the **real-world user action or business scenario** that triggers it (or, for pure infrastructure/plumbing/low-level utilities without direct user interaction, the **runtime or caller system event** that invokes it), skipping only minor utility helpers.
 
 ### 3. Core Code Steps (Scaled to the Actual Number of Engineering Decisions — Micro / Code Level)
 Divide into steps corresponding to the **actual number of distinct engineering decisions or guards in the execution flow** (`#### Step 1: <Practical technical question?>`, `#### Step 2: ...`—filter out peripheral boilerplate, but never omit an important logic step just to fit an arbitrary step limit):
-- **Plain-language transition opening:** Connect this step to the previous one and state the **Business Rule / Domain Invariant** this step protects (and, if another module in the commit treats the same entity differently, why the business domain requires that difference).
-- **Complete step code snippet (with full Subgoal Comments & Syntax Anatomy Legend):**
-  - Quote the **complete code block for that step** accompanied by all required Subgoal Comments and the 1-line Syntax Anatomy Legend, replacing with `...` only repetitive property assignments that contain zero control-flow logic.
-  - If the snippet manipulates unfamiliar format tokens, protocol operators, or regex capture groups, start the snippet with a **1-line Syntax Anatomy Legend comment** decoding each token/group in plain words.
-  - Above every index, offset, pointer, or string-slice calculation (`Index + Length`, `Substring`, `slice`), write a **Subgoal Comment with small concrete numbers** (e.g., `// 1. Find where previous word ends (starts at pos 100 + length 20 = ends at pos 120)`), and never dump raw, undecoded protocol gibberish into comments.
+- **Plain-language transition opening:** Connect this step to the previous one (including `filename:line` in the visible link label) and state the **Business Rule / Domain Invariant** this step protects (and, if another module in the commit treats the same entity differently, why the business domain requires that difference).
+- **Complete step code snippet (with `< 76-char` Subgoal Comments, ASCII Ruler & Syntax Anatomy Legend):**
+  - Quote the **complete code block for that step** accompanied by all required Subgoal Comments (`< 76` chars per comment line), replacing with `...` only repetitive property assignments that contain zero control-flow logic.
+  - If the snippet manipulates unfamiliar format tokens, protocol operators, or regex capture groups, start the snippet with a **Syntax Anatomy Legend comment** (`< 76` chars per line) decoding each token/group in plain words.
+  - Whenever the step involves string slicing (`Index + Length`, `Substring`, `slice`), byte offsets/padding, coordinate geometry (`X, Y`), or pointer ranges, include a **2–4 line ASCII Ruler Diagram** (`< 76` chars per line) and **Subgoal Comments with small concrete numbers** (e.g., `// 1. Find where previous word ends (start 100 + len 30 = pos 130)`), and never dump raw, undecoded protocol gibberish into comments.
   - For long string interpolations, regexes, or complex expressions, include a **concrete evaluated example** inside the comment (e.g., `// Match full key (e.g. k === "OrderA_1_Morning_0730")`).
   - **Worked-Example Completeness (Renkl's Principle):** Every condition present in a Section 3 code snippet (such as secondary boolean guards or loop boundary checks like `i + 1 < count`) MUST have its purpose explained clearly in Section 3 (in the inline comment or Contrastive Why), and any downstream code line that depends on that condition must be explicitly visible in the snippet—never hidden behind `...`.
 - **Focused explanation below the code (2 items only, localized to the user's language):**
   - **Contrastive Why (Why not the naive approach / what breaks if omitted):** Explain **the full reason behind every important guard, condition, or branch in the snippet**, written as separate, single-idea sentences ending with a period (`.`) and linked by `Old-Before-New` transitions (**never chain multiple clauses together with `->` arrows**).
-  - **Visual Dry-Run (Vertical Multi-Line Walkthrough With No Length Restriction):** Never cram Input, multiple checks or loop iterations (`i = 0, 1, 2`), and Output onto a single horizontal line. For each concrete scenario, break the trace **vertically onto separate indented sub-bullets** matching the numbered comments (`// 1.`, `// 2.`, `// 3.`) or loop passes in the snippet, using natural human phrases without parenthetical boolean dumps (`(sameLineY = true)`):
-    - **Input:** State the concrete sample items entering the snippet.
-    - **Step-by-step / Loop trace (1 vertical sub-bullet per check or loop iteration):** Show what happens at each numbered step or each loop pass (`Iteration 1 (i = 0): ...`, `Iteration 2 (i = 1): ...`), explicitly showing how any mutable variable or buffer looks after that step (using `->` only at the end of a step line for a short outcome like `-> passes the first if guard`).
-    - **Result:** Show the final return value or output string.
+  - **Visual Dry-Run (Compact 4-Column Markdown State Trace Table or Vertical Multi-Line Walkthrough):**
+    - **If the snippet contains a loop (`for`, `while`, `.reduce`, `.find`) building an accumulator/result OR evaluates multiple conditions across different cases:** Render a **compact 4-column Markdown State Trace Table** (`Step / Case` | `Input / Current Token` | `Check Evaluated (✅ / ❌)` | `Resulting State / Output`) with concise cells (`< 30–35` chars per cell) and zero unescaped `|` pipes inside cells.
+    - **If the snippet is a simple linear check without loop accumulation:** Break the trace **vertically onto separate indented sub-bullets** (**Input**, **Step 1..N** matching the numbered comments in the snippet, and **Result** with `✅` / `❌`) using natural human phrases without parenthetical boolean dumps (`(sameLineY = true)`).
 
 ### 4. Verification & Hidden Risks
-- **`⚠️ Defect Alert` *(Only if a bug/flaw exists in the diff or its unseen callers)*:** Before writing Section 4, audit immediate callers/consumers **outside the `git diff`**, error-handling branches (`catch`, `?.`, default `fallback`—checking whether they degrade gracefully or silently swallow errors and corrupt domain state without logging), and production-scale complexity (`O(N^2)` nested `.find()`/`.includes()` loops or `N+1` queries that look harmless in a 2-item dry-run). If any logic bug, silent failure, `race condition`, leak, scale trap, or contract break exists, highlight it right here at the top of Section 4 (pinpointing the exact line, failure scenario, real-world domain impact, and fix in clear, separate sentences ending with periods `.`)—and never praise broken/silent-failure code as "defensive" in Section 3.
-- **Verified:** State what is proven to work + a **Quick verification** specifying an exact `breakpoint` (`file:line`) accompanied by the concrete **State Invariant / expression** to inspect to verify state is not infected/corrupted (e.g., `breakpoint at file.ts:131: verify Object.keys(items) all carry ${groupId}_ prefix`), plus any relevant test command or visual check.
+- **`⚠️ Defect Alert` *(Only if a bug/flaw exists in the diff or its unseen callers)*:** Before writing Section 4, audit immediate callers/consumers **outside the `git diff`**, error-handling branches (`catch`, `?.`, default `fallback`—checking whether they degrade gracefully or silently swallow errors and corrupt domain state without logging), and production-scale complexity (`O(N^2)` nested `.find()`/`.includes()` loops or `N+1` queries that look harmless in a 2-item dry-run). If any logic bug, silent failure, `race condition`, leak, scale trap, or contract break exists, highlight it right here at the top of Section 4 using `⚠️` (pinpointing the exact `filename:line`, failure scenario, real-world domain impact, and fix in clear, separate sentences ending with periods `.`)—and never praise broken/silent-failure code as "defensive" in Section 3.
+- **Verified:** State what is proven to work + a **Quick verification** specifying an exact `breakpoint` (`[filename:line](path#Lline)`) accompanied by the concrete **State Invariant / expression** to inspect to verify state is not infected/corrupted (e.g., `breakpoint at OrderService.ts:131: verify Object.keys(items) all carry ${groupId}_ prefix`), plus any relevant test command or visual check.
 - **Assumptions & Risks:** List **all grounded, evidence-backed risks found in the code and its callers** (never invent generic boilerplate risks, and never omit a real risk to fit an arbitrary bullet cap)—covering remaining unverified `edge cases`, unseen caller assumptions, **persisted-data backward compatibility** (whenever an ID/Key format, state shape, or schema in `localStorage`/DB/cache/session/URL changes, whether existing saved user data will fail or need migration), and **scale/unhappy-path risks**. Explain both the **technical trigger** and the **real-world business/user consequence** in **separate, complete sentences ending with a period (`.`)** linked with `Old-Before-New` transitions (**never chain multiple clauses together with `->` arrows**).
 
 ### 5. Debugging Check (Dynamic Question Selection)
@@ -167,28 +185,30 @@ Divide into steps corresponding to the **actual number of distinct engineering d
    - When a commit primarily deletes legacy code, removes a `fallback` branch, or simplifies a module, quote the key removed block (or a compact `Before -> After` pair) in Section 3 and explain: (a) what original `edge case` or business rule the removed code protected, (b) what new mechanism replaces it so deletion is safe, and (c) whether existing persisted user data (`localStorage` / database) could fail once that branch is gone.
 5. **Defect & Unseen-Caller Audit in Section 4 (Anti-Post-Hoc Rationalization):**
    - Audit both the diff and its immediate callers/consumers outside the diff before explaining. Never rationalize broken code as clever design—after walking through Section 3, flag any real logic bug, `race condition`, leak, or broken downstream caller with **`⚠️ Defect Alert`** at the top of Section 4.
-6. **Turn-2 Consolidation & Transfer Contract (Sections 6, 7, 8):**
-   - **If the user asks a clarifying or *"What-if"* question before answering Section 5:** Answer their question thoroughly using a clear **Contrastive Why + Vertical Step-by-Step Walkthrough**, then lightly invite them to answer the Section 5 check when ready.
-   - **Once the user answers the Section 5 questions, structure the Turn-2 response into Sections 6, 7, and 8 (localized into the user's language, single-language headers only):**
+6. **Turn-2 Consolidation & Transfer Contract (Sections 6, 7, 8 — No Arbitrary Length, Pattern, or Item Caps):**
+   - **If the user asks a clarifying or *"What-if"* question before answering Section 5:** Answer their question thoroughly with no length cap using a clear **Contrastive Why + State Trace Table / ASCII Ruler / Vertical Step-by-Step Walkthrough**, then lightly invite them to answer the Section 5 check when ready.
+   - **Once the user answers the Section 5 questions, structure the Turn-2 response into Sections 6, 7, and 8 with full depth and zero artificial truncation (localized into the user's language, single-language headers only):**
      - **### 6. Answer Review & Diagnostic Feedback (Shute's Formative Feedback):**
-       - For each question, confirm what the user reasoned correctly and address their answer thoroughly.
-       - If they missed a boundary condition or downstream effect, point directly to the exact line in Section 3 and trace a concrete value through it step-by-step so they see the exact behavior immediately.
-     - **### 7. Transferable Engineering Pattern (Gick & Holyoak's Schema Induction for Far Transfer):**
-       - De-contextualize the core technique from this commit so the user can reuse it in future projects using 3 bullets:
-         - **Pattern Name & Mental Model:** State the standard English industry name for the technique in bold (e.g., **Lazy Read-Repair Migration**, **In-Place Binary Padding**, **Adjacent Token Coalescing**, **Composite Scoped Key**, **Optimistic UI Rollback**) followed by its core mental model in the user's language.
-         - **When to Reuse It in Other Projects:** State the exact problem signature in future projects where this pattern is the right tool.
-         - **When NOT to Use It (Tradeoff Limit):** State the boundary condition where this pattern breaks down and a different architecture is needed.
-     - **### 8. Maintenance Blast Radius & Next Action (Bohner & Arnold's Change Impact Analysis & Soloway's Delocalized Plans):**
-       - **Co-Change & Blast Radius Map:** List all files, callers, APIs, or persisted data stores coupled to this change (*"If you modify `<logic X>` in `<File A>` next month, also update `<logic Y>` in `<File B>`"*).
-       - **Actionable Hardening Step:** Point out either the most valuable **missing edge-case unit test** not yet covered in the commit (or offer to apply the fix for any `⚠️ Defect Alert` from Section 4), and ask if the user wants to generate that test/fix or save the Blast Radius rule to project docs.
+       - Address **every question and every part of the user's reasoning thoroughly** with no sentence or length cap, confirming each mechanism they reasoned correctly (`✅`).
+       - Whenever the user missed a boundary condition, edge case, or downstream effect (or wants to see a concrete trace), point directly to the exact `filename:line` in Section 3 and trace concrete values through it step-by-step (using a **Markdown State Trace Table**, **ASCII Ruler Diagram**, or **Vertical Walkthrough** as needed) so they see the exact behavior immediately.
+     - **### 7. Transferable Engineering Patterns (Gick & Holyoak's Schema Induction for Far Transfer):**
+       - De-contextualize **every distinct reusable engineering technique** from this commit so the user can apply them in future projects (never restrict to a single pattern if the commit combines multiple noteworthy techniques). For each pattern, explain thoroughly:
+         - **Pattern Name & Mental Model:** State the standard English industry name for the technique in bold (e.g., **Lazy Read-Repair Migration**, **In-Place Binary Padding**, **Adjacent Token Coalescing**, **Composite Scoped Key**, **Optimistic UI Rollback**) followed by its complete mental model in the user's language.
+         - **When to Reuse It in Other Projects:** State the exact problem signatures and scenarios in future projects where this pattern is the right tool.
+         - **When NOT to Use It (Tradeoff Limit):** State the boundary conditions where this pattern breaks down and what alternative architecture is needed instead.
+     - **### 8. Maintenance Blast Radius & Next Actions (Bohner & Arnold's Change Impact Analysis & Soloway's Delocalized Plans):**
+       - **Co-Change & Blast Radius Map:** List **all** files (`filename:line`), callers, APIs, or persisted data stores coupled to this change (*"If you modify `<logic X>` in `<File A:line>` next month, also update `<logic Y>` in `<File B:line>`"*).
+       - **Actionable Hardening Steps:** List all valuable **missing edge-case unit tests** not yet covered in the commit as well as fixes for any `⚠️ Defect Alert` from Section 4 (never limit to just one test or one fix), and ask if the user wants to generate those tests/fixes or save the Blast Radius rules to project docs.
 
 ## Red Flags — STOP and Fix Before Sending
 
+- **Violating Cross-Surface CLI & GUI Rendering Discipline:** Writing inline code comments or ASCII diagrams wider than **76 characters** (which wraps and breaks pointer alignment in 80-col CLI terminals and narrow IDE sidebars), using Markdown tables with more than 4 columns or cells wider than 35 chars, putting raw unescaped `|` or `||` inside table cells, omitting `filename:line` from visible link text, or outputting raw HTML tags (`<br>`, `<details>`) or `mermaid` blocks.
+- **Using decorative emojis or omitting visual diagrams/state tables:** Sprinkling decorative emojis (`🚀`, `💡`, `✨`, `📌`, `🔥`) instead of strictly using semantic traffic-light icons (`✅`, `❌`, `⚠️`), omitting a **2–4 line ASCII Ruler Diagram** when explaining string slicing / offsets / coordinates, or writing prose bullets instead of a **compact Markdown State Trace Table** when tracing loops or multi-condition cases in `Visual Dry-Run`.
 - **Arbitrarily truncating core mechanics, code lines, risks, or questions to hit a fixed number cap:** Dropping an important engineering step in Section 3, hiding control-flow lines behind `...` to save lines, omitting a primary pipeline function in Section 2, skipping a guard explanation in `Contrastive Why`, or omitting a real grounded risk in Section 4 instead of explaining every core mechanism completely.
 - **Chaining prose clauses with `->` into run-on lines:** Using `->` arrows in `Root cause`, `Key design challenge`, `Contrastive Why`, or `Assumptions & Risks` to join multiple clauses into a long run-on line instead of writing separate, single-idea sentences ending with periods (`.`) and linked by `Old-Before-New` transitions.
-- **Horizontal 1-line `Visual Dry-Run` or robotic variable dump in Section 3:** Cramming Input, multiple checks or loop iterations (`i = 0, 1, 2`), and Output onto a single horizontal `->` line, cluttering prose with parenthetical boolean dumps (`(sameLineY = true)`), or keeping a separate 3rd `If omitted` bullet that repeats the `Contrastive Why` instead of breaking each scenario **vertically onto separate indented sub-bullets** (**Input**, **Step 1..N / Iteration 1..N** showing intermediate buffer/variable state, and **Result**).
-- **Unexplained format/protocol tokens without a 1-line Syntax Anatomy Legend:** Showing protocol operators, graphics commands, bytecode, custom DSL syntax, or complex regex tokens in Section 1 (`Before -> After`) or Section 3 without placing a 1-line `// Format anatomy: ...` legend at the very top of the snippet, or dumping raw, undecoded protocol gibberish into explanatory comments.
-- **Uncommented index, offset, pointer, or slice arithmetic:** Leaving `Index + Length`, `Substring`, `slice`, coordinate math, or pointer offsets uncommented because they look like "basic syntax" instead of writing a Subgoal Comment above the line with small concrete numbers (`e.g., starts at pos 100 + length 20 = ends at pos 120`).
+- **Horizontal 1-line `Visual Dry-Run` or robotic variable dump in Section 3:** Cramming Input, multiple checks or loop iterations (`i = 0, 1, 2`), and Output onto a single horizontal `->` line, cluttering prose with parenthetical boolean dumps (`(sameLineY = true)`), or keeping a separate 3rd `If omitted` bullet that repeats the `Contrastive Why`.
+- **Unexplained format/protocol tokens without a Syntax Anatomy Legend:** Showing protocol operators, graphics commands, bytecode, custom DSL syntax, or complex regex tokens in Section 1 (`Before -> After`) or Section 3 without placing a `< 76-char` `// Anatomy: ...` legend at the very top of the snippet, or dumping raw, undecoded protocol gibberish into explanatory comments.
+- **Uncommented index, offset, pointer, or slice arithmetic:** Leaving `Index + Length`, `Substring`, `slice`, coordinate math, or pointer offsets without an ASCII ruler and Subgoal Comment with small concrete numbers (`e.g., start 100 + len 30 = pos 130`).
 - **Quizzing on unexplained mechanics or omitted (`...`) code in Section 5, or skipping Sections 6–8 in Turn 2:** Asking a Section 5 question about a secondary guard or condition whose purpose was not explained in Section 3, or whose downstream effect relies on code lines that were hidden behind `...` in Section 3, asking two questions that test the same concept, or failing to structure the Turn-2 answer review into **Sections 6, 7, and 8** (`Answer Review & Diagnostic Feedback`, `Transferable Engineering Pattern`, and `Maintenance Blast Radius & Next Action`).
 - **Ungrounded or missing Domain Model context:** Guessing the business meaning of undocumented internal codes as fact instead of labeling them an *inferred hypothesis*, forcing a fake end-user UI story onto a pure infrastructure diff instead of using a Runtime/System trigger, or omitting real-world triggers, divergent domain reasons, and user impact across Sections 2–4.
 - **Incomplete Section 4 audit or bare breakpoint:** Skipping the check for unseen callers, persisted-data compatibility, silent-failure `catch`/`fallback` blocks, `O(N^2)`/`N+1` scale traps, or suggesting a bare `breakpoint` line without the exact state invariant to inspect.
