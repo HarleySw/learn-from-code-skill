@@ -53,10 +53,10 @@ Khi giải thích code (Chế độ A), AI sẽ đi theo quy trình **2 lượt*
 **Lượt 1 — Hiểu trọn vẹn bản thay đổi:**
 
 1. **Bức tranh toàn cảnh:** Mô tả cảnh lỗi người dùng thấy ngay trên màn hình, ví dụ đời thường giúp nắm bản chất trong 10 giây, cách sửa tổng quát (không nhồi tên file/tên biến), và đoạn code ngắn `Trước -> Sau` (`❌` vs `✅`).
-2. **Luồng thực thi chính:** Đi theo 3–4 bước gắn với hành động thực tế của người dùng hoặc sự kiện hệ thống (mỗi bước chỉ gọi tên tối đa 1 hàm chính).
-3. **Các bước xử lý cốt lõi:** Chia theo đúng số quyết định kỹ thuật trong code; có chú thích ngắn ngay trên từng dòng, giải thích rõ *Tại sao không làm cách đơn giản hơn* theo từng gạch đầu dòng thoáng mắt, kèm **bảng chạy thử 4 cột** (và thước đo `ASCII Ruler` nếu có toán cắt chuỗi/tọa độ).
+2. **Luồng thực thi chính:** Đi theo đúng luồng chạy thực tế gắn với hành động của người dùng hoặc sự kiện hệ thống (mỗi bước chỉ gọi tên tối đa 1 hàm chính).
+3. **Các bước xử lý cốt lõi:** Chia theo đúng số quyết định kỹ thuật trong code; có chú thích ngay trên từng dòng, giải thích rõ *Tại sao không làm cách đơn giản hơn* theo từng gạch đầu dòng thoáng mắt, kèm **bảng chạy thử 4 cột** (và thước đo `ASCII Ruler` nếu có toán cắt chuỗi/tọa độ).
 4. **Kiểm chứng & Rủi ro tiềm ẩn:** Quét các hàm gọi bên ngoài `git diff`, kiểm tra tương thích ngược với dữ liệu cũ đã lưu (`localStorage`/DB), và bật `⚠️ Cảnh báo lỗi tiềm ẩn` nếu phát hiện bug thật.
-5. **Câu hỏi kiểm tra tư duy gỡ lỗi:** Đặt 1–3 câu hỏi tình huống biên bám sát vào đoạn code vừa xem để bạn tự kiểm tra độ hiểu trước khi đi tiếp.
+5. **Câu hỏi kiểm tra tư duy gỡ lỗi:** Đặt các câu hỏi tình huống biên tương ứng với độ phức tạp của đoạn code vừa xem để bạn tự kiểm tra độ hiểu trước khi đi tiếp.
 
 **Lượt 2 — Đúc kết & Mở rộng *(sau khi bạn trả lời)*:**
 
