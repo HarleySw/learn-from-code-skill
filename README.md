@@ -54,7 +54,7 @@ When reviewing code (Mode A), the agent follows a structured **2-turn workflow**
 
 1. **Big Picture:** Plain-language symptom, everyday analogy, root cause, and a `Before -> After` snippet (`❌` vs `✅`).
 2. **Main Execution Flow:** Chronological steps anchored to real-world user or system triggers (max 1 primary function per step).
-3. **Core Code Steps:** Focused snippets with inline comments, concrete examples, *Contrastive Why* sub-bullets, and a **4-column Markdown State Trace Table** (plus **ASCII Rulers** for slice/offset math).
+3. **Core Code Steps:** Focused snippets with inline comments, concrete examples, *Contrastive Why* sub-bullets, and **conversational vertical case walkthroughs** (plus **ASCII Rulers** for slice/offset math).
 4. **Verification & Hidden Risks:** Audits unseen callers, backward compatibility (`localStorage`/DB), and edge cases, flagging real bugs with `⚠️ Defect Alert`.
 5. **Debugging Check:** Targeted boundary questions dynamically scaled to the change to test your mental model before moving on.
 
@@ -67,7 +67,7 @@ When reviewing code (Mode A), the agent follows a structured **2-turn workflow**
 ## Features
 
 - **Beginner-Friendly & Senior-Deep:** Explains the big picture in plain everyday words before diving into code mechanics, with zero arbitrary length caps.
-- **Visual Breathing Room:** Uses scannable sub-bullets, 4-column state trace tables, and `< 76-char` ASCII rulers that render cleanly in both 80-col CLI terminals and narrow IDE sidebars.
+- **Visual Breathing Room:** Uses bite-sized `1 idea = 1 bullet` sub-bullets, vertical case walkthroughs, and `< 76-char` ASCII rulers that render cleanly in both 80-col CLI terminals and narrow IDE sidebars.
 - **Anti-Hallucination & Caller Audit:** Grounds domain terms in repo docs/tests first and checks callers outside the `git diff` for regressions.
 - **Auto-Localized:** Automatically responds in your language (English, Vietnamese, Japanese, etc.) using natural developer phrasing rather than stiff machine translation.
 
