@@ -1,17 +1,17 @@
 # learn-from-code
 
 [![skills.sh](https://skills.sh/b/HarleySw/learn-from-code-skill)](https://skills.sh/HarleySw/learn-from-code-skill)
-[![Version](https://img.shields.io/badge/version-2.1.2-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
+[![Version](https://img.shields.io/badge/version-2.1.3-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Agent Skills](https://img.shields.io/badge/standard-agentskills.io-purple.svg)](https://agentskills.io/)
 
 **English** | [Tiếng Việt](README.vi.md)
 
-An [Agent Skill](https://agentskills.io/) that helps you actually understand AI-generated code and `git diff`s—turning complex changes into clear mental models, visual state traces, and debugging intuition instead of walls of text.
+An [Agent Skill](https://agentskills.io/) for reading AI-generated code and `git diff`s. When an agent writes a large change across several files, this skill makes it break the change down into plain-language concepts, step-by-step code walkthroughs, and boundary checks you can trace on your own.
 
-## Quick Start
+## Quick start
 
-Install via the [Skills CLI](https://skills.sh) (supports Claude Code, Cursor, Antigravity, OpenCode, Codex, Windsurf, Cline, and 70+ agents):
+Install with the [Skills CLI](https://skills.sh) (works with Claude Code, Cursor, Antigravity, OpenCode, Codex, Windsurf, Cline, and 70+ agents):
 
 ```bash
 # Install in current project
@@ -24,7 +24,7 @@ npx skills add -g HarleySw/learn-from-code-skill
 <details>
 <summary>Manual installation</summary>
 
-Copy [`skills/learn-from-code/SKILL.md`](skills/learn-from-code/SKILL.md) into your agent's skill/rules folder:
+Copy [`skills/learn-from-code/SKILL.md`](skills/learn-from-code/SKILL.md) into your agent's skill or rules folder:
 
 - **Claude Code:** `.claude/skills/learn-from-code/SKILL.md`
 - **Cursor:** `.cursor/rules/learn-from-code.mdc`
@@ -33,43 +33,42 @@ Copy [`skills/learn-from-code/SKILL.md`](skills/learn-from-code/SKILL.md) into y
 
 ## Usage
 
-**Mode A — Understand a commit, `git diff`, or module (Default):**
+To review a commit, `git diff`, or existing module (Mode A, default):
 
 ```text
 /learn-from-code
 /learn-from-code explain commit 0bb8705
 ```
 
-**Mode B — Practice hands-on coding (`TODO(human)`):**
+To practice writing the core logic yourself while the agent sets up the surrounding boilerplate (Mode B, `TODO(human)`):
 
 ```text
 Use learn-from-code in Mode B to implement the retry backoff logic.
 ```
 
-## How It Works
+## How it works
 
-When reviewing code (Mode A), the agent follows a structured **2-turn workflow**:
+In Mode A, the review runs in two turns so you can check your understanding before moving on.
 
-**Turn 1 — Understand the Change:**
+**Turn 1: Understand the change**
 
-1. **Big Picture:** Plain-language symptom, everyday analogy, root cause, and a `Before -> After` snippet (`❌` vs `✅`).
-2. **Main Execution Flow:** Chronological steps anchored to real-world user or system triggers (max 1 primary function per step).
-3. **Core Code Steps:** Focused snippets with inline comments, concrete examples, *Contrastive Why* sub-bullets, and **conversational vertical case walkthroughs** (plus **ASCII Rulers** for slice/offset math).
-4. **Verification & Hidden Risks:** Audits unseen callers, backward compatibility (`localStorage`/DB), and edge cases, flagging real bugs with `⚠️ Defect Alert` and a compact `❌ Current -> ✅ Fix` code slice.
-5. **Debugging Check:** Self-contained boundary scenarios—each with its own focused code slice so you never have to scroll back up—dynamically scaled to test your mental model before moving on.
+1. **Big picture:** Describes what the user sees on screen, why the bug or design problem happens using an everyday analogy, and a short `Before -> After` snippet (`❌` vs `✅`) without burying you in file or variable names upfront.
+2. **Main execution flow:** Traces the path from the user action or system trigger through the main functions (at most one primary function or callback per step).
+3. **Core code steps:** Explains the library props or callbacks before showing the code block, adds inline comments and concrete examples above each branch, explains why simpler approaches fail, and walks through concrete cases (with `< 76-char` ASCII rulers when string slicing or offsets are involved).
+4. **Verification & hidden risks:** Checks callers outside the `git diff`, backward compatibility with saved data (`localStorage` or database), and edge cases. If the diff has a bug, it flags it under `⚠️ Defect Alert` with a `❌ Current -> ✅ Fix` snippet.
+5. **Debugging check:** Ends with boundary scenarios and a small code slice right in place, so you can test your mental model without scrolling back up.
 
-**Turn 2 — Consolidate & Transfer *(after you reply)*:**
+**Turn 2: Consolidate & transfer (after you reply)**
 
-6. **Answer Review:** Step-by-step feedback on your answers pinpointed to exact `filename:line` locations.
-7. **Transferable Patterns:** Reusable engineering patterns extracted from the diff (when to use vs. when not to use).
-8. **Blast Radius & Next Actions:** Cross-file co-change rules and missing edge-case tests worth adding.
+6. **Answer review:** Walks through your answers with exact `filename:line` references.
+7. **Transferable patterns:** Pulls out the reusable engineering patterns from the diff and notes when they break down.
+8. **Blast radius & next actions:** Lists coupled files that need to change together in the future and suggests missing edge-case unit tests.
 
-## Features
+## What makes it readable
 
-- **Beginner-Friendly & Senior-Deep:** Explains the big picture in plain everyday words before diving into code mechanics, with zero arbitrary length caps.
-- **Visual Breathing Room:** Uses bite-sized `1 idea = 1 bullet` sub-bullets, vertical case walkthroughs, and `< 76-char` ASCII rulers that render cleanly in both 80-col CLI terminals and narrow IDE sidebars.
-- **Anti-Hallucination & Caller Audit:** Grounds domain terms in repo docs/tests first and checks callers outside the `git diff` for regressions.
-- **Auto-Localized:** Automatically responds in your language (English, Vietnamese, Japanese, etc.) using natural developer phrasing rather than stiff machine translation.
+The output is formatted to fit both 80-column CLI terminals and narrow IDE chat sidebars. Code comments and ASCII diagrams stay under 76 characters per line, explanations use short sub-bullets (`1 idea = 1 bullet`), and domain codes are checked against your repo's docs and tests before the agent explains them.
+
+It also responds in whatever language you use (English, Vietnamese, Japanese, and others) while keeping everyday developer terms (`git diff`, `commit`, `race condition`, `fallback`, `props`, `callback`, `unit test`) intact.
 
 ## License
 
