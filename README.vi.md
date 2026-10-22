@@ -1,7 +1,7 @@
 # learn-from-code
 
 [![skills.sh](https://skills.sh/b/HarleySw/learn-from-code-skill)](https://skills.sh/HarleySw/learn-from-code-skill)
-[![Version](https://img.shields.io/badge/version-2.1.3-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
+[![Version](https://img.shields.io/badge/version-2.1.4-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Agent Skills](https://img.shields.io/badge/standard-agentskills.io-purple.svg)](https://agentskills.io/)
 
@@ -64,11 +64,11 @@ Bài giải thích được chia làm 2 lượt.
 4. **Kiểm chứng & rủi ro:** Kiểm tra các nơi gọi hàm bên ngoài `git diff` và khả năng tương thích với dữ liệu cũ đã lưu. Nếu phát hiện lỗi, AI gắn cờ `⚠️ Cảnh báo lỗi tiềm ẩn` kèm đoạn code sửa.
 5. **Câu hỏi kiểm tra:** Đưa ra tình huống biên kèm sẵn đoạn code ngắn ngay tại câu hỏi để bạn tự nhẩm kết quả.
 
-**Lượt 2: Sau khi bạn trả lời câu hỏi**
+**Lượt 2: Đúc kết & nâng tầm tư duy (sau khi bạn trả lời câu hỏi)**
 
-6. **Giải đáp:** Kiểm tra câu trả lời của bạn và chạy thử giá trị cụ thể trên đúng dòng `filename:line` nếu có nhánh bị sót.
-7. **Mẫu thiết kế:** Tách kỹ thuật cốt lõi trong bản `commit` thành pattern để tái sử dụng ở các project khác.
-8. **Phạm vi ảnh hưởng:** Chỉ ra các file liên quan cần sửa đồng bộ về sau và các `unit test` còn thiếu.
+6. **Giải đáp chi tiết câu trả lời:** Chốt ngắn gọn 1–2 câu cho câu bạn đã hiểu đúng, và bung lát cắt code kèm chạy thử từng bước trên đúng dòng `filename:line` cho câu có bẫy ngầm hoặc đề xuất sửa code.
+7. **Kỹ thuật tái sử dụng cho dự án khác:** Tách mọi mẫu kỹ thuật đáng giá trong bản `commit` kèm khung code mẫu độc lập bài toán, khi nào nên áp dụng và điểm đánh đổi.
+8. **Góc nhìn Thiết kế & Bài học Tư duy Senior:** Đối chiếu cách xử lý phần ngọn với thiết kế chuẩn từ gốc (`❌ Bản vá hiện tại` vs `✅ Thiết kế từ gốc`), chỉ ra bẫy nhân bản quy tắc ngầm (`Single Source of Truth`), và phân tích điểm mù khiến `unit test` chạy xanh nhưng vẫn lọt lỗi.
 
 ## Định dạng hiển thị
 

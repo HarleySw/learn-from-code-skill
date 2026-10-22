@@ -1,7 +1,7 @@
 # learn-from-code
 
 [![skills.sh](https://skills.sh/b/HarleySw/learn-from-code-skill)](https://skills.sh/HarleySw/learn-from-code-skill)
-[![Version](https://img.shields.io/badge/version-2.1.3-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
+[![Version](https://img.shields.io/badge/version-2.1.4-blue.svg)](https://github.com/HarleySw/learn-from-code-skill)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Agent Skills](https://img.shields.io/badge/standard-agentskills.io-purple.svg)](https://agentskills.io/)
 
@@ -60,11 +60,11 @@ In Mode A, the review runs in two turns so you can check your understanding befo
 4. **Verification & hidden risks:** Checks callers outside the `git diff`, backward compatibility with saved data, and edge cases. If the diff has a bug, it flags it under `⚠️ Defect Alert` with a `❌ Current -> ✅ Fix` snippet.
 5. **Debugging check:** Ends with boundary scenarios and a small code slice right in place, so you can test your mental model without scrolling back up.
 
-**Turn 2: Consolidate & transfer (after you reply)**
+**Turn 2: Consolidate & level up (after you reply)**
 
-6. **Answer review:** Walks through your answers with exact `filename:line` references.
-7. **Transferable patterns:** Pulls out the reusable engineering patterns from the diff and notes when they break down.
-8. **Blast radius & next actions:** Lists coupled files that need to change together in the future and suggests missing edge-case unit tests.
+6. **Detailed answer review:** Confirms correct answers concisely in 1–2 sentences, and unpacks missed edge cases or proposed fixes with `< 76-char` code slices and step-by-step traces at exact `filename:line` references.
+7. **Reusable techniques for other projects:** Extracts every worthwhile engineering pattern from the diff with a domain-independent code template, when to apply it, and when it breaks down.
+8. **Architectural critique & senior takeaways:** Compares tactical patches against cleaner root-level designs (`❌ Current patch` vs `✅ Root-level design`), highlights hidden coupling traps (`Single Source of Truth`), and exposes why existing unit tests stayed green despite edge-case bugs.
 
 ## What makes it readable
 
