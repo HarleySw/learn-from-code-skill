@@ -7,9 +7,9 @@
 
 **English** | [Tiếng Việt](README.vi.md)
 
-If you ask an AI to explain the code it just wrote and you walk away still confused, that is on the AI, not you. By default, models dump walls of jargon, skip the mental model, and throw unfamiliar library callbacks at you without saying when they run or what they return.
+If you ask an AI to explain the code it just wrote and you walk away still confused, that is on the AI, not you. By default, models dump walls of jargon, skip the mental model, and throw unfamiliar APIs or library mechanisms at you without saying when they run or what they return.
 
-`learn-from-code` is an [Agent Skill](https://agentskills.io/) that fixes how your coding agent explains `git diff`s and commits. When an agent writes a large change across several files, this skill makes it start with plain-language concepts, explain library props and callbacks before showing code, and walk through concrete test cases step by step.
+`learn-from-code` is an [Agent Skill](https://agentskills.io/) that fixes how your coding agent explains `git diff`s and commits. When an agent writes a large change across several files, this skill makes it start with plain-language concepts, explain unfamiliar APIs and mechanisms before showing code, and walk through concrete test cases step by step.
 
 ## Quick start
 
@@ -54,10 +54,10 @@ In Mode A, the review runs in two turns so you can check your understanding befo
 
 **Turn 1: Understand the change**
 
-1. **Big picture:** Describes what the user sees on screen, why the bug or design problem happens using an everyday analogy, and a short `Before -> After` snippet (`❌` vs `✅`) without burying you in file or variable names upfront.
-2. **Main execution flow:** Traces the path from the user action or system trigger through the main functions (at most one primary function or callback per step).
-3. **Core code steps:** Explains the library props or callbacks before showing the code block, adds inline comments and concrete examples above each branch, explains why simpler approaches fail, and walks through concrete cases (with `< 76-char` ASCII rulers when string slicing or offsets are involved).
-4. **Verification & hidden risks:** Checks callers outside the `git diff`, backward compatibility with saved data (`localStorage` or database), and edge cases. If the diff has a bug, it flags it under `⚠️ Defect Alert` with a `❌ Current -> ✅ Fix` snippet.
+1. **Big picture:** Describes what happens in practice, why the bug or design problem occurs using an everyday analogy, and a short `Before -> After` snippet (`❌` vs `✅`) without burying you in file or variable names upfront.
+2. **Main execution flow:** Traces the path from the user action or system trigger through the main functions or entry points (at most one primary function or mechanism per step).
+3. **Core code steps:** Explains unfamiliar APIs, library mechanisms, or parameters before showing the code block, adds inline comments and concrete examples above each branch, explains why simpler approaches fail, and walks through concrete cases (with `< 76-char` ASCII rulers when string slicing or offsets are involved).
+4. **Verification & hidden risks:** Checks callers outside the `git diff`, backward compatibility with saved data, and edge cases. If the diff has a bug, it flags it under `⚠️ Defect Alert` with a `❌ Current -> ✅ Fix` snippet.
 5. **Debugging check:** Ends with boundary scenarios and a small code slice right in place, so you can test your mental model without scrolling back up.
 
 **Turn 2: Consolidate & transfer (after you reply)**
@@ -70,7 +70,7 @@ In Mode A, the review runs in two turns so you can check your understanding befo
 
 The output is formatted to fit both 80-column CLI terminals and narrow IDE chat sidebars. Code comments and ASCII diagrams stay under 76 characters per line, explanations use short sub-bullets (`1 idea = 1 bullet`), and domain codes are checked against your repo's docs and tests before the agent explains them.
 
-It also responds in whatever language you use (English, Vietnamese, Japanese, and others) while keeping everyday developer terms (`git diff`, `commit`, `race condition`, `fallback`, `props`, `callback`, `unit test`) intact.
+It also responds in whatever language you use (English, Vietnamese, Japanese, and others) while keeping everyday developer terms (`git diff`, `commit`, `race condition`, `fallback`, `callback`, `unit test`) intact.
 
 ## License
 
