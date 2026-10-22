@@ -7,7 +7,9 @@
 
 **English** | [Tiếng Việt](README.vi.md)
 
-An [Agent Skill](https://agentskills.io/) for reading AI-generated code and `git diff`s. When an agent writes a large change across several files, this skill makes it break the change down into plain-language concepts, step-by-step code walkthroughs, and boundary checks you can trace on your own.
+If you ask an AI to explain the code it just wrote and you walk away still confused, that is on the AI, not you. By default, models dump walls of jargon, skip the mental model, and throw unfamiliar library callbacks at you without saying when they run or what they return.
+
+`learn-from-code` is an [Agent Skill](https://agentskills.io/) that fixes how your coding agent explains `git diff`s and commits. When an agent writes a large change across several files, this skill makes it start with plain-language concepts, explain library props and callbacks before showing code, and walk through concrete test cases step by step.
 
 ## Quick start
 
